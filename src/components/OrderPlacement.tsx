@@ -92,7 +92,7 @@ export const OrderPlacement = ({
       price: totalPrice,
       supplier: product.supplier.name,
       paymentMethod: paymentMethods.find(m => m.id === paymentMethod)?.name || 'Unknown',
-      status: 'processing',
+      status: 'success',
     });
 
     toast({

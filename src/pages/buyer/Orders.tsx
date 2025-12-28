@@ -8,6 +8,7 @@ import { useOrders } from "@/contexts/OrderContext";
 
 const getStatusColor = (status: string) => {
   switch (status) {
+    case "success":
     case "delivered":
       return "status-success";
     case "shipped":
@@ -81,7 +82,7 @@ const BuyerOrders = () => {
                         variant="outline"
                         className={getStatusColor(order.status)}
                       >
-                        {order.status === "delivered" ? (
+                      {order.status === "success" || order.status === "delivered" ? (
                           <CheckCircle className="h-3 w-3 mr-1" />
                         ) : order.status === "shipped" ? (
                           <Package className="h-3 w-3 mr-1" />

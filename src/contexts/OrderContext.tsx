@@ -10,7 +10,7 @@ export interface Order {
   price: number;
   supplier: string;
   paymentMethod: string;
-  status: 'processing' | 'shipped' | 'delivered';
+  status: 'processing' | 'shipped' | 'delivered' | 'success';
   date: string;
   from: string;
   to: string;

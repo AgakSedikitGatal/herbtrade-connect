@@ -5,6 +5,7 @@ import { Web3Footer } from "@/components/Web3Footer";
 import { Web3Background } from "@/components/Web3Background";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -22,15 +23,17 @@ import {
   Send,
   TrendingUp,
   Users,
-  Sparkles
+  Sparkles,
+  ChevronDown,
+  ChevronUp
 } from "lucide-react";
-import { useCommunity } from "@/contexts/CommunityContext";
+import { useCommunity, Comment } from "@/contexts/CommunityContext";
 import { authService } from "@/lib/auth";
 import { toast } from "@/hooks/use-toast";
 import { formatDistanceToNow } from "date-fns";
 
 const Community = () => {
-  const { posts, addPost, likePost, deletePost } = useCommunity();
+  const { posts, addPost, likePost, deletePost, addComment, likeComment, deleteComment, getCommentsForPost } = useCommunity();
   const user = authService.getUser();
   const [newPostContent, setNewPostContent] = useState("");
   const [selectedMedia, setSelectedMedia] = useState<{ type: 'image' | 'video'; url: string } | null>(null);
@@ -276,6 +279,23 @@ const Community = () => {
                       onDelete={() => handleDelete(post.id)}
                       formatTime={formatTime}
                       currentUser={user}
+                      comments={getCommentsForPost(post.id)}
+                      onAddComment={(content) => {
+                        if (user) {
+                          addComment(post.id, {
+                            author: {
+                              name: user.name,
+                              username: `@${user.name.toLowerCase().replace(/\s+/g, '')}`,
+                              avatar: user.role === 'seller' ? '/Topan.jpg' : '/dus.JPG',
+                              isVerified: user.role === 'seller',
+                              role: user.role
+                            },
+                            content
+                          });
+                        }
+                      }}
+                      onLikeComment={likeComment}
+                      onDeleteComment={deleteComment}
                     />
                   ))}
                 </TabsContent>
@@ -289,12 +309,29 @@ const Community = () => {
                       onDelete={() => handleDelete(post.id)}
                       formatTime={formatTime}
                       currentUser={user}
+                      comments={getCommentsForPost(post.id)}
+                      onAddComment={(content) => {
+                        if (user) {
+                          addComment(post.id, {
+                            author: {
+                              name: user.name,
+                              username: `@${user.name.toLowerCase().replace(/\s+/g, '')}`,
+                              avatar: user.role === 'seller' ? '/Topan.jpg' : '/dus.JPG',
+                              isVerified: user.role === 'seller',
+                              role: user.role
+                            },
+                            content
+                          });
+                        }
+                      }}
+                      onLikeComment={likeComment}
+                      onDeleteComment={deleteComment}
                     />
                   ))}
                 </TabsContent>
 
                 <TabsContent value="trending" className="space-y-4 mt-4">
-                  {posts.sort((a, b) => b.likes - a.likes).map((post) => (
+                  {[...posts].sort((a, b) => b.likes - a.likes).map((post) => (
                     <PostCard 
                       key={post.id} 
                       post={post} 
@@ -302,6 +339,23 @@ const Community = () => {
                       onDelete={() => handleDelete(post.id)}
                       formatTime={formatTime}
                       currentUser={user}
+                      comments={getCommentsForPost(post.id)}
+                      onAddComment={(content) => {
+                        if (user) {
+                          addComment(post.id, {
+                            author: {
+                              name: user.name,
+                              username: `@${user.name.toLowerCase().replace(/\s+/g, '')}`,
+                              avatar: user.role === 'seller' ? '/Topan.jpg' : '/dus.JPG',
+                              isVerified: user.role === 'seller',
+                              role: user.role
+                            },
+                            content
+                          });
+                        }
+                      }}
+                      onLikeComment={likeComment}
+                      onDeleteComment={deleteComment}
                     />
                   ))}
                 </TabsContent>
@@ -418,10 +472,45 @@ interface PostCardProps {
   onDelete: () => void;
   formatTime: (timestamp: string) => string;
   currentUser: { name: string; role: string } | null;
+  comments: Comment[];
+  onAddComment: (content: string) => void;
+  onLikeComment: (commentId: string) => void;
+  onDeleteComment: (commentId: string) => void;
 }
 
-const PostCard = ({ post, onLike, onDelete, formatTime, currentUser }: PostCardProps) => {
+const PostCard = ({ 
+  post, 
+  onLike, 
+  onDelete, 
+  formatTime, 
+  currentUser,
+  comments,
+  onAddComment,
+  onLikeComment,
+  onDeleteComment
+}: PostCardProps) => {
   const isOwnPost = currentUser?.name === post.author.name;
+  const [showComments, setShowComments] = useState(false);
+  const [newComment, setNewComment] = useState("");
+
+  const handleAddComment = () => {
+    if (!currentUser) {
+      toast({
+        title: "Login Required",
+        description: "Please login to comment",
+        variant: "destructive"
+      });
+      return;
+    }
+    if (!newComment.trim()) return;
+    
+    onAddComment(newComment);
+    setNewComment("");
+    toast({
+      title: "Comment added",
+      description: "Your comment has been posted"
+    });
+  };
 
   return (
     <Card className="glass border-border/50 p-4 hover:border-primary/30 transition-all duration-300">
@@ -478,10 +567,12 @@ const PostCard = ({ post, onLike, onDelete, formatTime, currentUser }: PostCardP
             <Button 
               variant="ghost" 
               size="sm" 
-              className="text-muted-foreground hover:text-primary gap-2"
+              className={`gap-2 ${showComments ? 'text-primary' : 'text-muted-foreground hover:text-primary'}`}
+              onClick={() => setShowComments(!showComments)}
             >
-              <MessageCircle className="h-4 w-4" />
+              <MessageCircle className={`h-4 w-4 ${showComments ? 'fill-primary/20' : ''}`} />
               <span className="text-sm">{post.comments}</span>
+              {showComments ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
             </Button>
             <Button 
               variant="ghost" 
@@ -508,9 +599,122 @@ const PostCard = ({ post, onLike, onDelete, formatTime, currentUser }: PostCardP
               <Share className="h-4 w-4" />
             </Button>
           </div>
+
+          {/* Comments Section */}
+          {showComments && (
+            <div className="mt-4 pt-4 border-t border-border/50 space-y-4">
+              {/* Add Comment */}
+              {currentUser ? (
+                <div className="flex gap-3">
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage src={currentUser.role === 'seller' ? '/Topan.jpg' : '/dus.JPG'} />
+                    <AvatarFallback>{currentUser.name.charAt(0)}</AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 flex gap-2">
+                    <Input
+                      placeholder="Write a comment..."
+                      value={newComment}
+                      onChange={(e) => setNewComment(e.target.value)}
+                      onKeyPress={(e) => e.key === 'Enter' && handleAddComment()}
+                      className="bg-background/50 border-border/50"
+                    />
+                    <Button 
+                      size="sm" 
+                      onClick={handleAddComment}
+                      disabled={!newComment.trim()}
+                      className="btn-web3"
+                    >
+                      <Send className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <div className="text-center py-2">
+                  <Link to="/login" className="text-primary hover:underline text-sm">
+                    Login to comment
+                  </Link>
+                </div>
+              )}
+
+              {/* Comments List */}
+              {comments.length > 0 ? (
+                <div className="space-y-3">
+                  {comments.map((comment) => (
+                    <CommentCard
+                      key={comment.id}
+                      comment={comment}
+                      formatTime={formatTime}
+                      currentUser={currentUser}
+                      onLike={() => onLikeComment(comment.id)}
+                      onDelete={() => onDeleteComment(comment.id)}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <p className="text-center text-muted-foreground text-sm py-2">
+                  No comments yet. Be the first to comment!
+                </p>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </Card>
+  );
+};
+
+// Comment Card Component
+interface CommentCardProps {
+  comment: Comment;
+  formatTime: (timestamp: string) => string;
+  currentUser: { name: string; role: string } | null;
+  onLike: () => void;
+  onDelete: () => void;
+}
+
+const CommentCard = ({ comment, formatTime, currentUser, onLike, onDelete }: CommentCardProps) => {
+  const isOwnComment = currentUser?.name === comment.author.name;
+
+  return (
+    <div className="flex gap-3 p-3 rounded-lg bg-muted/20 hover:bg-muted/30 transition-colors">
+      <Avatar className="h-8 w-8">
+        <AvatarImage src={comment.author.avatar} />
+        <AvatarFallback>{comment.author.name.charAt(0)}</AvatarFallback>
+      </Avatar>
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="font-medium text-sm">{comment.author.name}</span>
+          {comment.author.isVerified && (
+            <BadgeCheck className="h-4 w-4 text-primary fill-primary/20" />
+          )}
+          <span className="text-muted-foreground text-xs">{comment.author.username}</span>
+          <span className="text-muted-foreground text-xs">·</span>
+          <span className="text-muted-foreground text-xs">{formatTime(comment.timestamp)}</span>
+        </div>
+        <p className="mt-1 text-sm text-foreground">{comment.content}</p>
+        <div className="flex items-center gap-4 mt-2">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className={`h-6 px-2 gap-1 ${comment.likedByUser ? 'text-red-500' : 'text-muted-foreground hover:text-red-500'}`}
+            onClick={onLike}
+          >
+            <Heart className={`h-3 w-3 ${comment.likedByUser ? 'fill-current' : ''}`} />
+            <span className="text-xs">{comment.likes}</span>
+          </Button>
+          {isOwnComment && (
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="h-6 px-2 text-muted-foreground hover:text-destructive"
+              onClick={onDelete}
+            >
+              <Trash2 className="h-3 w-3" />
+            </Button>
+          )}
+        </div>
+      </div>
+    </div>
   );
 };
 

@@ -1,5 +1,21 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 
+export interface Comment {
+  id: string;
+  postId: string;
+  author: {
+    name: string;
+    username: string;
+    avatar: string;
+    isVerified: boolean;
+    role: 'buyer' | 'seller';
+  };
+  content: string;
+  timestamp: string;
+  likes: number;
+  likedByUser: boolean;
+}
+
 export interface Post {
   id: string;
   author: {
@@ -23,15 +39,20 @@ export interface Post {
 
 interface CommunityContextType {
   posts: Post[];
+  comments: Comment[];
   addPost: (post: Omit<Post, 'id' | 'timestamp' | 'likes' | 'comments' | 'reposts' | 'likedByUser'>) => void;
   likePost: (postId: string) => void;
   deletePost: (postId: string) => void;
+  addComment: (postId: string, comment: Omit<Comment, 'id' | 'postId' | 'timestamp' | 'likes' | 'likedByUser'>) => void;
+  likeComment: (commentId: string) => void;
+  deleteComment: (commentId: string) => void;
+  getCommentsForPost: (postId: string) => Comment[];
 }
 
 const CommunityContext = createContext<CommunityContextType | undefined>(undefined);
 
 const STORAGE_KEY = 'herblocx_community_posts';
-
+const COMMENTS_STORAGE_KEY = 'herblocx_community_comments';
 // Initial mock posts
 const initialPosts: Post[] = [
   {
@@ -128,15 +149,73 @@ const initialPosts: Post[] = [
   }
 ];
 
+// Initial mock comments
+const initialComments: Comment[] = [
+  {
+    id: 'c1',
+    postId: '1',
+    author: {
+      name: 'Budi Santoso',
+      username: '@budisantoso',
+      avatar: '/dus.JPG',
+      isVerified: false,
+      role: 'buyer'
+    },
+    content: 'Great quality turmeric! Just placed an order. Looking forward to receiving it.',
+    timestamp: new Date(Date.now() - 1000 * 60 * 20).toISOString(),
+    likes: 5,
+    likedByUser: false
+  },
+  {
+    id: 'c2',
+    postId: '1',
+    author: {
+      name: 'Green Botanics Co.',
+      username: '@greenbotanics',
+      avatar: '/aul.JPG',
+      isVerified: true,
+      role: 'seller'
+    },
+    content: 'Congratulations on the new batch! Your turmeric is always top-notch. 🌿',
+    timestamp: new Date(Date.now() - 1000 * 60 * 15).toISOString(),
+    likes: 12,
+    likedByUser: false
+  },
+  {
+    id: 'c3',
+    postId: '2',
+    author: {
+      name: 'Ahmad Buyer',
+      username: '@ahmadb',
+      avatar: '/dus.JPG',
+      isVerified: false,
+      role: 'buyer'
+    },
+    content: 'Amazing milestone! Your products have always been reliable. Keep it up! 💪',
+    timestamp: new Date(Date.now() - 1000 * 60 * 60).toISOString(),
+    likes: 8,
+    likedByUser: false
+  }
+];
+
 export const CommunityProvider = ({ children }: { children: ReactNode }) => {
   const [posts, setPosts] = useState<Post[]>(() => {
     const stored = localStorage.getItem(STORAGE_KEY);
     return stored ? JSON.parse(stored) : initialPosts;
   });
 
+  const [comments, setComments] = useState<Comment[]>(() => {
+    const stored = localStorage.getItem(COMMENTS_STORAGE_KEY);
+    return stored ? JSON.parse(stored) : initialComments;
+  });
+
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(posts));
   }, [posts]);
+
+  useEffect(() => {
+    localStorage.setItem(COMMENTS_STORAGE_KEY, JSON.stringify(comments));
+  }, [comments]);
 
   const addPost = (postData: Omit<Post, 'id' | 'timestamp' | 'likes' | 'comments' | 'reposts' | 'likedByUser'>) => {
     const newPost: Post = {
@@ -166,10 +245,66 @@ export const CommunityProvider = ({ children }: { children: ReactNode }) => {
 
   const deletePost = (postId: string) => {
     setPosts(prev => prev.filter(post => post.id !== postId));
+    // Also delete associated comments
+    setComments(prev => prev.filter(comment => comment.postId !== postId));
+  };
+
+  const addComment = (postId: string, commentData: Omit<Comment, 'id' | 'postId' | 'timestamp' | 'likes' | 'likedByUser'>) => {
+    const newComment: Comment = {
+      ...commentData,
+      id: `c-${Date.now()}`,
+      postId,
+      timestamp: new Date().toISOString(),
+      likes: 0,
+      likedByUser: false
+    };
+    setComments(prev => [...prev, newComment]);
+    // Update comment count on the post
+    setPosts(prev => prev.map(post => 
+      post.id === postId ? { ...post, comments: post.comments + 1 } : post
+    ));
+  };
+
+  const likeComment = (commentId: string) => {
+    setComments(prev => prev.map(comment => {
+      if (comment.id === commentId) {
+        return {
+          ...comment,
+          likes: comment.likedByUser ? comment.likes - 1 : comment.likes + 1,
+          likedByUser: !comment.likedByUser
+        };
+      }
+      return comment;
+    }));
+  };
+
+  const deleteComment = (commentId: string) => {
+    const comment = comments.find(c => c.id === commentId);
+    if (comment) {
+      setComments(prev => prev.filter(c => c.id !== commentId));
+      // Update comment count on the post
+      setPosts(prev => prev.map(post => 
+        post.id === comment.postId ? { ...post, comments: Math.max(0, post.comments - 1) } : post
+      ));
+    }
+  };
+
+  const getCommentsForPost = (postId: string) => {
+    return comments.filter(comment => comment.postId === postId);
   };
 
   return (
-    <CommunityContext.Provider value={{ posts, addPost, likePost, deletePost }}>
+    <CommunityContext.Provider value={{ 
+      posts, 
+      comments,
+      addPost, 
+      likePost, 
+      deletePost,
+      addComment,
+      likeComment,
+      deleteComment,
+      getCommentsForPost
+    }}>
       {children}
     </CommunityContext.Provider>
   );

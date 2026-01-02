@@ -83,6 +83,7 @@ export const Web3Header = () => {
 
   const navLinks = [
     { href: "/shop", label: "Marketplace", isScroll: false },
+    { href: "/community", label: "Community", isScroll: false },
     { id: "about", label: "About", isScroll: true },
     { id: "contact", label: "Contact", isScroll: true },
   ];

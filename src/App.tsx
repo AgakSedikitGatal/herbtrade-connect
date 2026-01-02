@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import { CartProvider } from "@/contexts/CartContext";
 import { OrderProvider } from "@/contexts/OrderContext";
+import { CommunityProvider } from "@/contexts/CommunityContext";
 import { InitialLoader } from "@/components/InitialLoader";
 import { PageTransition } from "@/components/PageTransition";
 import { ScrollToTop } from "@/components/ScrollToTop";
@@ -19,6 +20,7 @@ import Shop from "./pages/Shop";
 import Product from "./pages/Product";
 import Supplier from "./pages/Supplier";
 import Suppliers from "./pages/Suppliers";
+import Community from "./pages/Community";
 
 import Tracking from "./pages/Tracking";
 import BuyerDashboard from "./pages/buyer/Dashboard";
@@ -49,6 +51,7 @@ const AnimatedRoutes = () => {
         <Route path="/product/:id" element={<PageTransition><Product /></PageTransition>} />
         <Route path="/supplier/:id" element={<PageTransition><Supplier /></PageTransition>} />
         <Route path="/suppliers" element={<PageTransition><Suppliers /></PageTransition>} />
+        <Route path="/community" element={<PageTransition><Community /></PageTransition>} />
         <Route path="/cart" element={<PageTransition><BuyerRequests /></PageTransition>} />
         <Route path="/tracking/:orderId" element={<PageTransition><Tracking /></PageTransition>} />
         <Route path="/tracking" element={<PageTransition><Tracking /></PageTransition>} />
@@ -87,15 +90,17 @@ const App = () => {
     <QueryClientProvider client={queryClient}>
       <OrderProvider>
         <CartProvider>
-          <TooltipProvider>
-            <Toaster />
-            <Sonner />
-            {showLoader && <InitialLoader onComplete={handleLoaderComplete} />}
-            <BrowserRouter>
-              <ScrollToTop />
-              <AnimatedRoutes />
-            </BrowserRouter>
-          </TooltipProvider>
+          <CommunityProvider>
+            <TooltipProvider>
+              <Toaster />
+              <Sonner />
+              {showLoader && <InitialLoader onComplete={handleLoaderComplete} />}
+              <BrowserRouter>
+                <ScrollToTop />
+                <AnimatedRoutes />
+              </BrowserRouter>
+            </TooltipProvider>
+          </CommunityProvider>
         </CartProvider>
       </OrderProvider>
     </QueryClientProvider>

@@ -128,7 +128,7 @@ const Index = () => {
 
           <div
             ref={addToRefs}
-            className="animate-on-scroll flex flex-col sm:flex-row gap-4 justify-center"
+            className="animate-on-scroll flex flex-col sm:flex-row gap-4 justify-center flex-wrap"
             style={{ animationDelay: "0.4s" }}
           >
             <Link to="/login">
@@ -140,6 +140,12 @@ const Index = () => {
             <Link to="/shop">
               <Button className="btn-web3-outline text-lg">
                 Explore Marketplace
+              </Button>
+            </Link>
+            <Link to="/community">
+              <Button className="btn-web3-outline text-lg gap-2">
+                <MessageCircle className="h-5 w-5" />
+                View Our Community
               </Button>
             </Link>
           </div>

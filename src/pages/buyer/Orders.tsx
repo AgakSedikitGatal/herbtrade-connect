@@ -86,7 +86,7 @@ const BuyerOrders = () => {
                     </div>
                     
                     <div className="text-right flex flex-row md:flex-col items-center md:items-end gap-2">
-                      <p className="text-sm font-semibold text-primary">${order.totalAmount.toFixed(2)} USD</p>
+                      <p className="text-sm font-semibold text-primary">${(order.totalAmount || 0).toFixed(2)} USD</p>
                       <Badge
                         variant="outline"
                         className={getStatusColor(order.status)}

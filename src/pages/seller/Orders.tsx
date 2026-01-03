@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Web3Header } from "@/components/Web3Header";
 import { Web3Footer } from "@/components/Web3Footer";
 import { Web3Background } from "@/components/Web3Background";
@@ -20,19 +21,20 @@ interface Order {
 }
 
 const ordersData: Order[] = [
-  { id: '0x8f4e...3a2b', product: 'Jahe', customer: 'Matt Dickerson', date: '13/05/2022', amount: '90 USDT', payment: 'Crypto', status: 'Delivered' },
-  { id: '0x2c7a...8d1f', product: 'Kunyit', customer: 'Wiktoria', date: '22/05/2022', amount: '150 USDC', payment: 'Crypto', status: 'Delivered' },
-  { id: '0x5b9d...1e4a', product: 'Jahe', customer: 'Trixia Raya', date: '15/06/2022', amount: '200 USDT', payment: 'E-Wallet', status: 'Process' },
-  { id: '0x9e3c...7f2b', product: 'Kayu Manis', customer: 'Jamie Morrison', date: '08/05/2022', amount: '80 USDC', payment: 'Crypto', status: 'Delivered' },
-  { id: '0x1a7f...4c9e', product: 'Lada Hitam', customer: 'Robert Levy', date: '30/04/2022', amount: '120 USDT', payment: 'Crypto', status: 'Canceled' },
-  { id: '0x3d8b...2f5c', product: 'Pala', customer: 'Noel Baldwin', date: '15/04/2022', amount: '95 USDC', payment: 'E-Wallet', status: 'Delivered' },
-  { id: '0x6e2a...9c4d', product: 'Jahe', customer: 'Zaire Saris', date: '22/03/2022', amount: '110 USDT', payment: 'Crypto', status: 'Delivered' },
-  { id: '0x7f1c...3a8e', product: 'Kunyit', customer: 'Michael Jenkins', date: '03/03/2022', amount: '75 USDC', payment: 'Crypto', status: 'Delivered' },
-  { id: '0x4b9e...1d7f', product: 'Kayu Manis', customer: 'Tyler Moran', date: '01/02/2022', amount: '140 USDT', payment: 'Crypto', status: 'Delivered' },
-  { id: '0x2c8d...5a6b', product: 'Lada Hitam', customer: 'Liam Melon', date: '19/01/2022', amount: '160 USDC', payment: 'E-Wallet', status: 'Delivered' }
+  { id: '0x8f4e...3a2b', product: 'Jahe', customer: 'Matt Dickerson', date: '13/05/2022', amount: '90 USD', payment: 'Crypto', status: 'Delivered' },
+  { id: '0x2c7a...8d1f', product: 'Kunyit', customer: 'Wiktoria', date: '22/05/2022', amount: '150 USD', payment: 'Crypto', status: 'Delivered' },
+  { id: '0x5b9d...1e4a', product: 'Jahe', customer: 'Trixia Raya', date: '15/06/2022', amount: '200 USD', payment: 'E-Wallet', status: 'Process' },
+  { id: '0x9e3c...7f2b', product: 'Kayu Manis', customer: 'Jamie Morrison', date: '08/05/2022', amount: '80 USD', payment: 'Crypto', status: 'Delivered' },
+  { id: '0x1a7f...4c9e', product: 'Lada Hitam', customer: 'Robert Levy', date: '30/04/2022', amount: '120 USD', payment: 'Crypto', status: 'Canceled' },
+  { id: '0x3d8b...2f5c', product: 'Pala', customer: 'Noel Baldwin', date: '15/04/2022', amount: '95 USD', payment: 'E-Wallet', status: 'Delivered' },
+  { id: '0x6e2a...9c4d', product: 'Jahe', customer: 'Zaire Saris', date: '22/03/2022', amount: '110 USD', payment: 'Crypto', status: 'Delivered' },
+  { id: '0x7f1c...3a8e', product: 'Kunyit', customer: 'Michael Jenkins', date: '03/03/2022', amount: '75 USD', payment: 'Crypto', status: 'Delivered' },
+  { id: '0x4b9e...1d7f', product: 'Kayu Manis', customer: 'Tyler Moran', date: '01/02/2022', amount: '140 USD', payment: 'Crypto', status: 'Delivered' },
+  { id: '0x2c8d...5a6b', product: 'Lada Hitam', customer: 'Liam Melon', date: '19/01/2022', amount: '160 USD', payment: 'E-Wallet', status: 'Delivered' }
 ];
 
 const SellerOrders = () => {
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [entriesPerPage, setEntriesPerPage] = useState('10');
 
@@ -116,7 +118,14 @@ const SellerOrders = () => {
                       className="border-b border-border/30 hover:bg-muted/30 transition-colors animate-fade-in"
                       style={{ animationDelay: `${0.2 + index * 0.05}s` }}
                     >
-                      <td className="py-3 px-4 font-mono text-sm text-primary">{order.id}</td>
+                      <td className="py-3 px-4">
+                        <button 
+                          onClick={() => navigate(`/transaction/${order.id.split('...')[0]}`)}
+                          className="font-mono text-sm text-primary hover:underline cursor-pointer"
+                        >
+                          {order.id}
+                        </button>
+                      </td>
                       <td className="py-3 px-4">{order.product}</td>
                       <td className="py-3 px-4">{order.customer}</td>
                       <td className="py-3 px-4 text-muted-foreground">{order.date}</td>

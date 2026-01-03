@@ -73,7 +73,7 @@ const BuyerRequests = () => {
                 <Coins className="h-4 w-4" />
                 Total Value
               </div>
-              <p className="text-2xl font-bold font-mono">{totalValue.toFixed(2)} <span className="text-xs text-primary">USDT</span></p>
+              <p className="text-2xl font-bold font-mono">{totalValue.toFixed(2)} <span className="text-xs text-primary">USD</span></p>
             </CardContent>
           </Card>
           <Card className="glass-card border-border/50 animate-fade-in" style={{ animationDelay: '100ms' }}>
@@ -143,7 +143,7 @@ const BuyerRequests = () => {
                     <div className="glass p-3 rounded-lg border border-border/50 space-y-2">
                       <div className="flex items-center justify-between">
                         <span className="text-xs text-muted-foreground">Price</span>
-                        <span className="font-mono font-bold text-primary">{request.price.toFixed(2)} USDT</span>
+                        <span className="font-mono font-bold text-primary">{request.price.toFixed(2)} USD</span>
                       </div>
                       <div className="flex items-center justify-between">
                         <span className="text-xs text-muted-foreground">Quantity</span>

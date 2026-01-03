@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -30,19 +31,18 @@ const generateMockBlocks = (): Block[] => {
   }));
 };
 
-const stablecoins = ["USDT", "USDC"];
-
 const generateMockTransactions = (): Transaction[] => {
   return Array.from({ length: 5 }, () => ({
     hash: `0x${Math.random().toString(16).slice(2, 10)}...${Math.random().toString(16).slice(2, 6)}`,
     from: `0x${Math.random().toString(16).slice(2, 8)}...${Math.random().toString(16).slice(2, 6)}`,
     to: `0x${Math.random().toString(16).slice(2, 8)}...${Math.random().toString(16).slice(2, 6)}`,
-    value: (Math.random() * 500 + 50).toFixed(2) + " " + stablecoins[Math.floor(Math.random() * stablecoins.length)],
+    value: (Math.random() * 500 + 50).toFixed(2) + " USD",
     status: Math.random() > 0.2 ? "success" : "pending",
   }));
 };
 
 export const BlockchainStats = () => {
+  const navigate = useNavigate();
   const [blocks, setBlocks] = useState<Block[]>([]);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
@@ -130,14 +130,15 @@ export const BlockchainStats = () => {
             : transactions.map((tx, i) => (
                 <div
                   key={i}
-                  className="flex items-center justify-between p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors"
+                  className="flex items-center justify-between p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors cursor-pointer"
+                  onClick={() => navigate(`/transaction/${tx.hash.split('...')[0]}`)}
                 >
                   <div className="flex items-center gap-3">
                     <div className="p-2 bg-secondary/10 rounded">
                       <ArrowRightLeft className="h-4 w-4 text-secondary" />
                     </div>
                     <div>
-                      <p className="font-mono text-sm text-primary">{tx.hash}</p>
+                      <p className="font-mono text-sm text-primary hover:underline">{tx.hash}</p>
                       <p className="text-xs text-muted-foreground">
                         {tx.from} → {tx.to}
                       </p>

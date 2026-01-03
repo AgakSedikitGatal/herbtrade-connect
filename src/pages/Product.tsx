@@ -179,10 +179,10 @@ const Product = () => {
               </div>
               <div className="flex items-baseline gap-2 mb-4">
                 <span className="text-4xl font-bold text-primary font-mono">${product.price.toFixed(2)}</span>
-                <span className="text-lg text-primary">USDT</span>
+                <span className="text-lg text-primary">USD</span>
               </div>
               <div className="text-sm text-muted-foreground">
-                Total: <span className="text-foreground font-semibold">${calculatePrice().toFixed(2)} USDT</span>
+                Total: <span className="text-foreground font-semibold">${calculatePrice().toFixed(2)} USD</span>
               </div>
             </div>
 
@@ -256,7 +256,7 @@ const Product = () => {
                 {isLoggedIn ? 'Add to Cart' : 'Login to Add'}
               </Button>
               <Button size="lg" className="flex-1 btn-web3" onClick={handleBuyNow}>
-                Buy Now - ${calculatePrice().toFixed(2)} USDT
+                Buy Now - ${calculatePrice().toFixed(2)} USD
               </Button>
             </div>
 

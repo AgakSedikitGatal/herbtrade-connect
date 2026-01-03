@@ -518,8 +518,7 @@ const Index = () => {
                     </div>
                     <div>
                       <h4 className="font-semibold text-lg mb-2">Email</h4>
-                      <p className="text-muted-foreground">info@herblocx.com</p>
-                      <p className="text-muted-foreground">support@herblocx.com</p>
+                      <p className="text-muted-foreground">herblocx@gmail.com</p>
                     </div>
                   </div>
                 </CardContent>
@@ -533,8 +532,8 @@ const Index = () => {
                     </div>
                     <div>
                       <h4 className="font-semibold text-lg mb-2">Phone & WhatsApp</h4>
-                      <p className="text-muted-foreground">+62 800-300-353</p>
-                      <p className="text-muted-foreground">WhatsApp: +62 812-3456-7890</p>
+                      <p className="text-muted-foreground">+62 851-7211-0196</p>
+                      <p className="text-muted-foreground">WhatsApp: +62 851-7211-0196</p>
                     </div>
                   </div>
                 </CardContent>
@@ -549,8 +548,8 @@ const Index = () => {
                     <div>
                       <h4 className="font-semibold text-lg mb-2">Address</h4>
                       <p className="text-muted-foreground">
-                        Jl. Herbal Nusantara No. 123<br />
-                        Jakarta Selatan 12345<br />
+                        Jl. Raya Lidah Wetan, Kec. Lakarsantri<br />
+                        Surabaya, Jawa Timur 60213<br />
                         Indonesia
                       </p>
                     </div>
@@ -585,7 +584,7 @@ const Index = () => {
             <h3 className="text-2xl font-bold text-primary mb-6">Connect With Us</h3>
             <div className="flex justify-center gap-4 mb-6">
               {[
-                { icon: Instagram, href: "https://instagram.com/herblocx", label: "Instagram" },
+                { icon: Instagram, href: "https://www.instagram.com/herblocxindonesia/", label: "Instagram" },
                 { icon: MessageCircle, href: "https://wa.me/628123456789", label: "WhatsApp" },
                 { icon: Twitter, href: "https://twitter.com/herblocx", label: "Twitter" },
                 { icon: Linkedin, href: "https://linkedin.com/company/herblocx", label: "LinkedIn" },

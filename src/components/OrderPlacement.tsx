@@ -84,12 +84,12 @@ export const OrderPlacement = ({
 
     // Add order to history
     addOrder({
-      txHash: mockTxHash,
       productName: product.name,
       productId: product.id,
       productImage: product.image,
       quantity: `${quantity} ${unit.toUpperCase()}`,
-      price: totalPrice,
+      pricePerUnit: product.price,
+      totalAmount: totalPrice,
       supplier: product.supplier.name,
       paymentMethod: paymentMethods.find(m => m.id === paymentMethod)?.name || 'Unknown',
       status: 'success',

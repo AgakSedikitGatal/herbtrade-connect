@@ -3,24 +3,31 @@ import { createContext, useContext, useState, useEffect, ReactNode } from 'react
 export interface Order {
   id: string;
   txHash: string;
+  blockNumber: number;
+  timestamp: string;
   productName: string;
   productId: string;
   productImage: string;
   quantity: string;
-  price: number;
+  pricePerUnit: number;
+  totalAmount: number;
   supplier: string;
+  buyer: string;
   paymentMethod: string;
   status: 'processing' | 'shipped' | 'delivered' | 'success';
   date: string;
   from: string;
   to: string;
+  gasUsed: string;
+  gasPrice: string;
 }
 
 interface OrderContextType {
   orders: Order[];
-  addOrder: (order: Omit<Order, 'id' | 'date' | 'from' | 'to'>) => void;
+  addOrder: (order: Omit<Order, 'id' | 'date' | 'from' | 'to' | 'txHash' | 'blockNumber' | 'timestamp' | 'gasUsed' | 'gasPrice' | 'buyer'>) => void;
   updateOrderStatus: (id: string, status: Order['status']) => void;
   clearOrders: () => void;
+  getOrderByTxHash: (txHash: string) => Order | undefined;
 }
 
 const OrderContext = createContext<OrderContextType | undefined>(undefined);
@@ -31,7 +38,20 @@ const generateWalletAddress = () => {
   for (let i = 0; i < 40; i++) {
     addr += chars[Math.floor(Math.random() * chars.length)];
   }
-  return addr.slice(0, 6) + '...' + addr.slice(-4);
+  return addr;
+};
+
+const generateTxHash = () => {
+  const chars = '0123456789abcdef';
+  let hash = '0x';
+  for (let i = 0; i < 64; i++) {
+    hash += chars[Math.floor(Math.random() * chars.length)];
+  }
+  return hash;
+};
+
+const generateBlockNumber = () => {
+  return 19000000 + Math.floor(Math.random() * 500000);
 };
 
 export const OrderProvider = ({ children }: { children: ReactNode }) => {
@@ -44,13 +64,24 @@ export const OrderProvider = ({ children }: { children: ReactNode }) => {
     localStorage.setItem('herbal-orders', JSON.stringify(orders));
   }, [orders]);
 
-  const addOrder = (order: Omit<Order, 'id' | 'date' | 'from' | 'to'>) => {
+  const addOrder = (order: Omit<Order, 'id' | 'date' | 'from' | 'to' | 'txHash' | 'blockNumber' | 'timestamp' | 'gasUsed' | 'gasPrice' | 'buyer'>) => {
+    const txHash = generateTxHash();
+    const fromAddr = generateWalletAddress();
+    const toAddr = generateWalletAddress();
+    const buyerAddr = generateWalletAddress();
+    
     const newOrder: Order = {
       ...order,
-      id: '0x' + Math.random().toString(16).slice(2, 6) + '...' + Math.random().toString(16).slice(2, 6),
+      id: txHash.slice(0, 10) + '...' + txHash.slice(-8),
+      txHash: txHash,
+      blockNumber: generateBlockNumber(),
+      timestamp: new Date().toISOString(),
       date: new Date().toISOString().split('T')[0],
-      from: generateWalletAddress(),
-      to: generateWalletAddress(),
+      from: fromAddr,
+      to: toAddr,
+      buyer: buyerAddr,
+      gasUsed: (21000 + Math.floor(Math.random() * 50000)).toString(),
+      gasPrice: (20 + Math.floor(Math.random() * 30)).toString(),
     };
     setOrders(prev => [newOrder, ...prev]);
   };
@@ -65,8 +96,21 @@ export const OrderProvider = ({ children }: { children: ReactNode }) => {
     setOrders([]);
   };
 
+  const getOrderByTxHash = (txHash: string): Order | undefined => {
+    return orders.find(order => {
+      if (order.txHash === txHash) return true;
+      if (order.txHash.toLowerCase().startsWith(txHash.toLowerCase().replace('...', ''))) return true;
+      if (txHash.includes('...')) {
+        const [start, end] = txHash.split('...');
+        return order.txHash.toLowerCase().startsWith(start.toLowerCase()) && 
+               order.txHash.toLowerCase().endsWith(end.toLowerCase());
+      }
+      return false;
+    });
+  };
+
   return (
-    <OrderContext.Provider value={{ orders, addOrder, updateOrderStatus, clearOrders }}>
+    <OrderContext.Provider value={{ orders, addOrder, updateOrderStatus, clearOrders, getOrderByTxHash }}>
       {children}
     </OrderContext.Provider>
   );

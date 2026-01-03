@@ -20,14 +20,39 @@ import {
   User,
   Building2
 } from "lucide-react";
-import { getTransactionByHash, formatAddress, transactions } from "@/lib/transactions";
+import { getTransactionByHash, formatAddress, Transaction } from "@/lib/transactions";
+import { useOrders, Order } from "@/contexts/OrderContext";
 import { toast } from "sonner";
+
+// Convert Order to Transaction format
+const orderToTransaction = (order: Order): Transaction => ({
+  txHash: order.txHash,
+  blockNumber: order.blockNumber,
+  timestamp: order.timestamp,
+  from: order.from,
+  to: order.to,
+  product: order.productName,
+  quantity: order.quantity,
+  pricePerUnit: order.pricePerUnit,
+  totalAmount: order.totalAmount,
+  gasUsed: parseInt(order.gasUsed),
+  gasPrice: parseInt(order.gasPrice),
+  status: order.status === 'success' ? 'success' : 'pending',
+  method: order.paymentMethod,
+  supplier: order.supplier,
+  buyer: order.buyer.slice(0, 6) + '...' + order.buyer.slice(-4),
+});
 
 const TransactionDetail = () => {
   const { txHash } = useParams();
   const navigate = useNavigate();
+  const { getOrderByTxHash } = useOrders();
   
-  const transaction = txHash ? getTransactionByHash(txHash) : undefined;
+  // First check localStorage orders, then static transactions
+  const orderFromContext = txHash ? getOrderByTxHash(txHash) : undefined;
+  const transaction = orderFromContext 
+    ? orderToTransaction(orderFromContext)
+    : (txHash ? getTransactionByHash(txHash) : undefined);
 
   const copyToClipboard = (text: string, label: string) => {
     navigator.clipboard.writeText(text);

@@ -9,6 +9,10 @@ export interface Product {
   inStock: boolean;
   onSale: boolean;
   description: string;
+  minOrder: {
+    quantity: number;
+    unit: string;
+  };
   specifications: {
     essentialOil?: string;
     curcumin?: string;
@@ -42,6 +46,10 @@ export const products: Product[] = [
     inStock: true,
     onSale: true,
     description: 'Premium quality turmeric simplisia from East Java. Known for its high curcumin content and medicinal properties.',
+    minOrder: {
+      quantity: 100,
+      unit: 'Kilogram'
+    },
     specifications: {
       essentialOil: 'not less than 1.85% v/b',
       curcumin: 'not less than 3.82%',
@@ -73,6 +81,10 @@ export const products: Product[] = [
     inStock: true,
     onSale: false,
     description: 'High-quality Andrographis paniculata, known for its immune-boosting properties.',
+    minOrder: {
+      quantity: 50,
+      unit: 'Kilogram'
+    },
     specifications: {
       packing: '20kg/carton',
       effectiveIngredients: 'Andrographolide',
@@ -102,6 +114,10 @@ export const products: Product[] = [
     inStock: true,
     onSale: true,
     description: 'Premium Ceylon cinnamon bark, known for its sweet flavor and medicinal properties.',
+    minOrder: {
+      quantity: 200,
+      unit: 'Kilogram'
+    },
     specifications: {
       packing: '15kg/box',
       effectiveIngredients: 'Cinnamaldehyde',
@@ -131,6 +147,10 @@ export const products: Product[] = [
     inStock: true,
     onSale: false,
     description: 'Premium quality black pepper with strong aroma and high piperine content.',
+    minOrder: {
+      quantity: 500,
+      unit: 'Kilogram'
+    },
     specifications: {
       packing: '25kg/bag',
       effectiveIngredients: 'Piperine',
@@ -160,6 +180,10 @@ export const products: Product[] = [
     inStock: true,
     onSale: true,
     description: 'High-quality nutmeg with rich aroma and flavor, perfect for culinary and medicinal use.',
+    minOrder: {
+      quantity: 100,
+      unit: 'Box'
+    },
     specifications: {
       packing: '20kg/carton',
       effectiveIngredients: 'Myristicin',

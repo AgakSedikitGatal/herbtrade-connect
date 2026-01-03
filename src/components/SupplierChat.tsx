@@ -18,10 +18,22 @@ interface SupplierChatProps {
   supplierName: string;
   supplierAvatar?: string;
   productName: string;
+  isOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
-export const SupplierChat = ({ supplierName, supplierAvatar, productName }: SupplierChatProps) => {
-  const [isOpen, setIsOpen] = useState(false);
+export const SupplierChat = ({ supplierName, supplierAvatar, productName, isOpen: controlledOpen, onOpenChange }: SupplierChatProps) => {
+  const [internalOpen, setInternalOpen] = useState(false);
+  
+  // Use controlled state if provided, otherwise use internal state
+  const isOpen = controlledOpen !== undefined ? controlledOpen : internalOpen;
+  const setIsOpen = (open: boolean) => {
+    if (onOpenChange) {
+      onOpenChange(open);
+    } else {
+      setInternalOpen(open);
+    }
+  };
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<Message[]>([
     {

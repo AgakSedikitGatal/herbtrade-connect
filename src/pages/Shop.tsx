@@ -313,6 +313,11 @@ const Shop = () => {
                           </div>
                         </div>
 
+                        {/* Minimum Order */}
+                        <div className="text-sm font-medium text-accent">
+                          Min. Order: {product.minOrder.quantity.toLocaleString()} {product.minOrder.unit}
+                        </div>
+
                         {/* Location */}
                         <p className="text-xs text-muted-foreground flex items-center gap-1">
                           📍 {product.location}

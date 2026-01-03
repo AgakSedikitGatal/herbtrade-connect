@@ -75,7 +75,7 @@ export const Web3Footer = () => {
               </li>
               <li>
                 <a href="/NIB.pdf" className="text-muted-foreground hover:text-foreground transition-colors">
-                  Whitepaper
+                  Legality
                 </a>
               </li>
             </ul>

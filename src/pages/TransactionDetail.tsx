@@ -23,6 +23,7 @@ import {
 import { getTransactionByHash, formatAddress, Transaction } from "@/lib/transactions";
 import { useOrders, Order } from "@/contexts/OrderContext";
 import { useCart, CartItem } from "@/contexts/CartContext";
+import { hashFromSeed, addressFromSeed, numberFromSeed, decimalFromSeed, statusFromSeed } from "@/lib/mockChain";
 import { toast } from "sonner";
 
 // Helper to generate deterministic blockchain data from txHash
@@ -110,15 +111,50 @@ const TransactionDetail = () => {
     });
   };
   
-  // Check sources in order: OrderContext -> CartContext -> Static transactions
+  // Check sources in order: OrderContext -> CartContext -> Static transactions -> Synthetic fallback
   const orderFromContext = txHash ? getOrderByTxHash(txHash) : undefined;
   const cartItemFromContext = txHash && !orderFromContext ? getCartItemByTxHash(txHash) : undefined;
+  const staticTransaction = txHash && !orderFromContext && !cartItemFromContext ? getTransactionByHash(txHash) : undefined;
+  
+  // Generate synthetic transaction as fallback (for dashboard mock transactions)
+  const generateSyntheticTransaction = (hash: string): Transaction => {
+    const data = generateDeterministicData(hash);
+    const products = ['Network Activity', 'Marketplace Transaction', 'Herbal Trade', 'Supply Chain Transfer'];
+    const suppliers = ['HerBlocX Network', 'PT Herbal Nusantara', 'CV Rempah Sejahtera', 'Toko Rempah Tradisional'];
+    const methods = ['Bank Transfer', 'Credit/Debit Card', 'E-Wallet', 'Mobile Payment'];
+    
+    const productIdx = numberFromSeed(hash + '-product', 0, products.length - 1);
+    const supplierIdx = numberFromSeed(hash + '-supplier', 0, suppliers.length - 1);
+    const methodIdx = numberFromSeed(hash + '-method', 0, methods.length - 1);
+    
+    return {
+      txHash: hash,
+      blockNumber: data.blockNumber,
+      timestamp: new Date(Date.now() - numberFromSeed(hash + '-time', 0, 86400000 * 7)).toISOString(),
+      from: data.from,
+      to: data.to,
+      product: products[productIdx],
+      quantity: `${numberFromSeed(hash + '-qty', 10, 200)} KG`,
+      pricePerUnit: decimalFromSeed(hash + '-price', 5, 25),
+      totalAmount: decimalFromSeed(hash + '-total', 100, 800),
+      gasUsed: data.gasUsed,
+      gasPrice: data.gasPrice,
+      status: statusFromSeed(hash),
+      method: methods[methodIdx],
+      supplier: suppliers[supplierIdx],
+      buyer: data.buyer.slice(0, 6) + '...' + data.buyer.slice(-4),
+    };
+  };
   
   const transaction = orderFromContext 
     ? orderToTransaction(orderFromContext)
     : cartItemFromContext
       ? cartItemToTransaction(cartItemFromContext)
-      : (txHash ? getTransactionByHash(txHash) : undefined);
+      : staticTransaction
+        ? staticTransaction
+        : txHash
+          ? generateSyntheticTransaction(txHash)
+          : undefined;
 
   const copyToClipboard = (text: string, label: string) => {
     navigator.clipboard.writeText(text);

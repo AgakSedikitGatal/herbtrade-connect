@@ -69,17 +69,8 @@ export const OrderPlacement = ({
     // Simulate blockchain transaction
     await new Promise(resolve => setTimeout(resolve, 3000));
 
-    // Generate mock transaction hash
-    const mockTxHash = '0x' + Array.from({ length: 64 }, () => 
-      Math.floor(Math.random() * 16).toString(16)
-    ).join('');
-    
-    setTxHash(mockTxHash);
-    setIsProcessing(false);
-    setStep('confirmation');
-
-    // Add order to history
-    addOrder({
+    // Add order to history and get the created order with txHash
+    const createdOrder = addOrder({
       productName: product.name,
       productId: product.id,
       productImage: product.image,
@@ -90,6 +81,11 @@ export const OrderPlacement = ({
       paymentMethod: paymentMethods.find(m => m.id === paymentMethod)?.name || 'Unknown',
       status: 'success',
     });
+    
+    // Use the txHash from the created order
+    setTxHash(createdOrder.txHash);
+    setIsProcessing(false);
+    setStep('confirmation');
 
     toast({
       title: "Order Confirmed!",

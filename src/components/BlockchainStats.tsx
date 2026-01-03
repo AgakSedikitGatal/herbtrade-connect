@@ -3,23 +3,15 @@ import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Box, ArrowRightLeft, Clock, CheckCircle, AlertCircle } from "lucide-react";
-import { hashFromSeed, addressFromSeed, shortenHash, shortenAddress, numberFromSeed, decimalFromSeed, statusFromSeed } from "@/lib/mockChain";
+import { Box, ArrowRightLeft, Clock, CheckCircle, AlertCircle, Wifi, WifiOff } from "lucide-react";
+import { hashFromSeed, shortenHash, numberFromSeed } from "@/lib/mockChain";
+import { useRealtimeTransactions } from "@/hooks/useRealtimeTransactions";
 
 interface Block {
   number: number;
   timestamp: string;
   transactions: number;
   hash: string;
-}
-
-interface Transaction {
-  hashFull: string;
-  hashDisplay: string;
-  fromDisplay: string;
-  toDisplay: string;
-  value: string;
-  status: "success" | "pending";
 }
 
 // Get a stable time slot (changes every 12 seconds)
@@ -37,40 +29,27 @@ const generateMockBlocks = (): Block[] => {
   }));
 };
 
-const generateMockTransactions = (): Transaction[] => {
-  const slot = getTimeSlot();
-  return Array.from({ length: 5 }, (_, i) => {
-    const seed = `latestTx-${slot}-${i}`;
-    const hashFull = hashFromSeed(seed);
-    return {
-      hashFull,
-      hashDisplay: shortenHash(hashFull),
-      fromDisplay: shortenAddress(addressFromSeed(seed, 0)),
-      toDisplay: shortenAddress(addressFromSeed(seed, 1)),
-      value: decimalFromSeed(seed, 50, 500).toFixed(2) + " USD",
-      status: statusFromSeed(seed),
-    };
-  });
-};
-
 export const BlockchainStats = () => {
   const navigate = useNavigate();
   const [blocks, setBlocks] = useState<Block[]>([]);
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
+  
+  // Use real-time transaction simulation
+  const { transactions, isConnected, lastUpdate } = useRealtimeTransactions({
+    maxTransactions: 5,
+    updateInterval: 6000, // New transaction every 6 seconds
+  });
 
   useEffect(() => {
     // Simulate loading
     const timer = setTimeout(() => {
       setBlocks(generateMockBlocks());
-      setTransactions(generateMockTransactions());
       setLoading(false);
     }, 1500);
 
-    // Update data periodically
+    // Update blocks periodically
     const interval = setInterval(() => {
       setBlocks(generateMockBlocks());
-      setTransactions(generateMockTransactions());
     }, 12000);
 
     return () => {
@@ -123,34 +102,71 @@ export const BlockchainStats = () => {
         </CardContent>
       </Card>
 
-      {/* Latest Transactions */}
+      {/* Latest Transactions - Real-time */}
       <Card className="glass-card border-border/50">
-        <CardHeader className="flex flex-row items-center gap-3 pb-4">
-          <div className="p-2 bg-secondary/20 rounded-lg">
-            <ArrowRightLeft className="h-5 w-5 text-secondary" />
+        <CardHeader className="flex flex-row items-center justify-between pb-4">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-secondary/20 rounded-lg">
+              <ArrowRightLeft className="h-5 w-5 text-secondary" />
+            </div>
+            <div>
+              <CardTitle className="text-lg">Live Transactions</CardTitle>
+              {lastUpdate && (
+                <p className="text-xs text-muted-foreground">
+                  Last update: {lastUpdate.toLocaleTimeString()}
+                </p>
+              )}
+            </div>
           </div>
-          <CardTitle className="text-lg">Latest Transactions</CardTitle>
+          <div className="flex items-center gap-2">
+            {isConnected ? (
+              <Badge variant="outline" className="status-success text-xs animate-pulse">
+                <Wifi className="h-3 w-3 mr-1" />
+                Live
+              </Badge>
+            ) : (
+              <Badge variant="outline" className="bg-muted/50 text-muted-foreground text-xs">
+                <WifiOff className="h-3 w-3 mr-1" />
+                Connecting...
+              </Badge>
+            )}
+          </div>
         </CardHeader>
         <CardContent className="space-y-3">
-          {loading
+          {!isConnected || transactions.length === 0
             ? Array.from({ length: 5 }).map((_, i) => (
                 <div key={i} className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
                   <Skeleton className="h-4 w-32" />
                   <Skeleton className="h-4 w-20" />
                 </div>
               ))
-            : transactions.map((tx, i) => (
+            : transactions.map((tx) => (
                 <div
-                  key={i}
-                  className="flex items-center justify-between p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors cursor-pointer"
+                  key={tx.id}
+                  className={`flex items-center justify-between p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-all cursor-pointer ${
+                    tx.isNew 
+                      ? 'animate-pulse ring-2 ring-primary/50 bg-primary/10' 
+                      : ''
+                  }`}
                   onClick={() => navigate(`/transaction/${tx.hashFull}`)}
                 >
                   <div className="flex items-center gap-3">
-                    <div className="p-2 bg-secondary/10 rounded">
-                      <ArrowRightLeft className="h-4 w-4 text-secondary" />
+                    <div className={`p-2 rounded transition-colors ${
+                      tx.isNew ? 'bg-primary/30' : 'bg-secondary/10'
+                    }`}>
+                      <ArrowRightLeft className={`h-4 w-4 ${
+                        tx.isNew ? 'text-primary' : 'text-secondary'
+                      }`} />
                     </div>
                     <div>
-                      <p className="font-mono text-sm text-primary hover:underline">{tx.hashDisplay}</p>
+                      <div className="flex items-center gap-2">
+                        <p className="font-mono text-sm text-primary hover:underline">{tx.hashDisplay}</p>
+                        {tx.isNew && (
+                          <Badge className="bg-primary/20 text-primary border-primary/30 text-[10px] px-1.5 py-0">
+                            NEW
+                          </Badge>
+                        )}
+                      </div>
                       <p className="text-xs text-muted-foreground">
                         {tx.fromDisplay} → {tx.toDisplay}
                       </p>

@@ -61,7 +61,6 @@ export const OrderPlacement = ({
 
   const paymentMethods = [
     { id: 'bank', name: 'Bank Transfer', icon: Building2, description: 'Direct bank transfer' },
-    { id: 'wallet', name: 'Crypto Wallet', icon: Wallet, description: 'Pay with crypto' },
     { id: 'card', name: 'Credit/Debit Card', icon: CreditCard, description: 'Visa, Mastercard' },
     { id: 'mobile', name: 'Mobile Payment', icon: Smartphone, description: 'E-wallet & mobile banking' },
   ];
@@ -313,17 +312,6 @@ export const OrderPlacement = ({
           <div className="flex justify-between text-sm">
             <span className="text-muted-foreground">Order ID</span>
             <span className="font-mono">ORD-{Date.now().toString(36).toUpperCase()}</span>
-          </div>
-          <div className="flex justify-between text-sm">
-            <span className="text-muted-foreground">Transaction Hash</span>
-            <a 
-              href={`https://etherscan.io/tx/${txHash}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-mono text-primary hover:underline"
-            >
-              {txHash.slice(0, 10)}...{txHash.slice(-8)}
-            </a>
           </div>
           <div className="flex justify-between text-sm">
             <span className="text-muted-foreground">Status</span>

@@ -4,7 +4,7 @@ import { Web3Background } from "@/components/Web3Background";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Package, ExternalLink, Clock, Verified, TrendingUp, Coins, ShoppingCart, Trash2 } from "lucide-react";
+import { Package, Clock, Verified, TrendingUp, Coins, ShoppingCart, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
 
@@ -139,7 +139,7 @@ const BuyerRequests = () => {
                       <Verified className="h-3 w-3 text-primary" />
                     </Link>
 
-                    {/* Blockchain Info */}
+                    {/* Order Info */}
                     <div className="glass p-3 rounded-lg border border-border/50 space-y-2">
                       <div className="flex items-center justify-between">
                         <span className="text-xs text-muted-foreground">Price</span>
@@ -148,18 +148,6 @@ const BuyerRequests = () => {
                       <div className="flex items-center justify-between">
                         <span className="text-xs text-muted-foreground">Quantity</span>
                         <span className="font-mono">{request.quantity}</span>
-                      </div>
-                      <div className="flex items-center justify-between pt-2 border-t border-border/50">
-                        <span className="text-xs text-muted-foreground">TX Hash</span>
-                        <a 
-                          href={`https://etherscan.io/tx/${request.txHash}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-xs font-mono text-primary hover:underline flex items-center gap-1"
-                        >
-                          {request.txHash?.slice(0, 8)}...{request.txHash?.slice(-6)}
-                          <ExternalLink className="h-3 w-3" />
-                        </a>
                       </div>
                     </div>
 

@@ -179,15 +179,13 @@ const Tracking = () => {
                 <div className="glass p-3 rounded-lg border border-border/50">
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-muted-foreground">Transaction Hash</span>
-                    <a 
-                      href={`https://etherscan.io/tx/${order.txHash}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <Link 
+                      to={`/transaction/${order.txHash}`}
                       className="text-sm font-mono text-primary hover:underline flex items-center gap-1"
                     >
                       {order.txHash?.slice(0, 16)}...{order.txHash?.slice(-12)}
                       <ExternalLink className="h-3 w-3" />
-                    </a>
+                    </Link>
                   </div>
                 </div>
               </div>

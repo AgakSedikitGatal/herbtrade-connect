@@ -151,15 +151,13 @@ const BuyerRequests = () => {
                       </div>
                       <div className="flex items-center justify-between pt-2 border-t border-border/50">
                         <span className="text-xs text-muted-foreground">TX Hash</span>
-                        <a 
-                          href={`https://etherscan.io/tx/${request.txHash}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
+                        <Link 
+                          to={`/transaction/${request.txHash}`}
                           className="text-xs font-mono text-primary hover:underline flex items-center gap-1"
                         >
                           {request.txHash?.slice(0, 8)}...{request.txHash?.slice(-6)}
                           <ExternalLink className="h-3 w-3" />
-                        </a>
+                        </Link>
                       </div>
                     </div>
 

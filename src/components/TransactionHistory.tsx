@@ -1,6 +1,7 @@
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ExternalLink, CheckCircle, Clock, ArrowRightLeft } from "lucide-react";
+import { CheckCircle, Clock, ArrowRightLeft } from "lucide-react";
 
 interface Transaction {
   id: string;
@@ -42,6 +43,7 @@ interface TransactionHistoryProps {
 }
 
 export const TransactionHistory = ({ productId }: TransactionHistoryProps) => {
+  const navigate = useNavigate();
   const transactions = generateTransactions(productId);
 
   return (
@@ -57,7 +59,8 @@ export const TransactionHistory = ({ productId }: TransactionHistoryProps) => {
           {transactions.map((tx) => (
             <div
               key={tx.id}
-              className="flex items-center justify-between p-3 rounded-lg bg-muted/30 border border-border/30 hover:border-primary/30 transition-colors"
+              className="flex items-center justify-between p-3 rounded-lg bg-muted/30 border border-border/30 hover:border-primary/30 transition-colors cursor-pointer"
+              onClick={() => navigate(`/transaction/${tx.txHash.split('...')[0]}`)}
             >
               <div className="flex items-center gap-3">
                 <div className="p-2 rounded-full bg-primary/20">
@@ -77,17 +80,9 @@ export const TransactionHistory = ({ productId }: TransactionHistoryProps) => {
               </div>
               
               <div className="text-right">
-                <div className="font-semibold text-sm">${(tx.amount * tx.price).toFixed(2)}</div>
+                <div className="font-semibold text-sm">${(tx.amount * tx.price).toFixed(2)} USD</div>
                 <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
-                  <span className="font-mono">{tx.txHash}</span>
-                  <a 
-                    href={`https://etherscan.io/tx/${tx.txHash}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-primary hover:text-primary/80"
-                  >
-                    <ExternalLink className="h-3 w-3" />
-                  </a>
+                  <span className="font-mono text-primary hover:underline">{tx.txHash}</span>
                 </div>
               </div>
               

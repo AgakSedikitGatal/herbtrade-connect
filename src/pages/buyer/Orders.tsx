@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { Web3Header } from "@/components/Web3Header";
 import { Web3Footer } from "@/components/Web3Footer";
 import { Web3Background } from "@/components/Web3Background";
@@ -22,6 +23,7 @@ const getStatusColor = (status: string) => {
 
 const BuyerOrders = () => {
   const { orders } = useOrders();
+  const navigate = useNavigate();
 
   return (
     <div className="min-h-screen flex flex-col gradient-bg relative overflow-hidden">
@@ -56,7 +58,12 @@ const BuyerOrders = () => {
                       <ArrowRightLeft className="h-4 w-4 text-primary" />
                     </div>
                     <div>
-                      <p className="font-mono text-sm text-primary">{order.id}</p>
+                      <button 
+                        onClick={() => navigate(`/transaction/${order.txHash || order.id}`)}
+                        className="font-mono text-sm text-primary hover:underline cursor-pointer"
+                      >
+                        {order.id}
+                      </button>
                       <p className="text-xs text-muted-foreground">
                         {order.from} → {order.to}
                       </p>
@@ -77,7 +84,7 @@ const BuyerOrders = () => {
                     </div>
                     
                     <div className="text-right flex flex-row md:flex-col items-center md:items-end gap-2">
-                      <p className="text-sm font-semibold text-primary">${order.price.toFixed(2)} USDT</p>
+                      <p className="text-sm font-semibold text-primary">${order.price.toFixed(2)} USD</p>
                       <Badge
                         variant="outline"
                         className={getStatusColor(order.status)}

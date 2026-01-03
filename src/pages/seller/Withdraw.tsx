@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Web3Header } from "@/components/Web3Header";
 import { Web3Footer } from "@/components/Web3Footer";
 import { Web3Background } from "@/components/Web3Background";
@@ -8,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { ArrowRightLeft, Wallet } from "lucide-react";
+import { Wallet } from "lucide-react";
 
 interface WithdrawOrder {
   id: string;
@@ -21,19 +22,20 @@ interface WithdrawOrder {
 }
 
 const withdrawData: WithdrawOrder[] = [
-  { id: '0x8f4e...3a2b', product: 'Jahe', customer: 'Matt Dickerson', date: '13/05/2022', amount: '90 USDT', total: '60,987 USDT', status: 'Delivered' },
-  { id: '0x2c7a...8d1f', product: 'Kunyit', customer: 'Wiktoria', date: '22/05/2022', amount: '150 USDC', total: '45,678 USDC', status: 'Delivered' },
-  { id: '0x5b9d...1e4a', product: 'Jahe', customer: 'Trixia Raya', date: '15/06/2022', amount: '200 USDT', total: '38,450 USDT', status: 'Process' },
-  { id: '0x9e3c...7f2b', product: 'Kayu Manis', customer: 'Jamie Morrison', date: '08/05/2022', amount: '80 USDC', total: '52,341 USDC', status: 'Delivered' },
-  { id: '0x1a7f...4c9e', product: 'Lada Hitam', customer: 'Robert Levy', date: '30/04/2022', amount: '120 USDT', total: '25,479 USDT', status: 'Canceled' },
-  { id: '0x3d8b...2f5c', product: 'Pala', customer: 'Noel Baldwin', date: '15/04/2022', amount: '95 USDC', total: '48,230 USDC', status: 'Delivered' },
-  { id: '0x6e2a...9c4d', product: 'Jahe', customer: 'Zaire Saris', date: '22/03/2022', amount: '110 USDT', total: '39,876 USDT', status: 'Delivered' },
-  { id: '0x7f1c...3a8e', product: 'Kunyit', customer: 'Michael Jenkins', date: '03/03/2022', amount: '75 USDC', total: '55,432 USDC', status: 'Delivered' },
-  { id: '0x4b9e...1d7f', product: 'Kayu Manis', customer: 'Tyler Moran', date: '01/02/2022', amount: '140 USDT', total: '42,198 USDT', status: 'Delivered' },
-  { id: '0x2c8d...5a6b', product: 'Lada Hitam', customer: 'Liam Melon', date: '19/01/2022', amount: '160 USDC', total: '37,654 USDC', status: 'Delivered' }
+  { id: '0x8f4e...3a2b', product: 'Jahe', customer: 'Matt Dickerson', date: '13/05/2022', amount: '90 USD', total: '60,987 USD', status: 'Delivered' },
+  { id: '0x2c7a...8d1f', product: 'Kunyit', customer: 'Wiktoria', date: '22/05/2022', amount: '150 USD', total: '45,678 USD', status: 'Delivered' },
+  { id: '0x5b9d...1e4a', product: 'Jahe', customer: 'Trixia Raya', date: '15/06/2022', amount: '200 USD', total: '38,450 USD', status: 'Process' },
+  { id: '0x9e3c...7f2b', product: 'Kayu Manis', customer: 'Jamie Morrison', date: '08/05/2022', amount: '80 USD', total: '52,341 USD', status: 'Delivered' },
+  { id: '0x1a7f...4c9e', product: 'Lada Hitam', customer: 'Robert Levy', date: '30/04/2022', amount: '120 USD', total: '25,479 USD', status: 'Canceled' },
+  { id: '0x3d8b...2f5c', product: 'Pala', customer: 'Noel Baldwin', date: '15/04/2022', amount: '95 USD', total: '48,230 USD', status: 'Delivered' },
+  { id: '0x6e2a...9c4d', product: 'Jahe', customer: 'Zaire Saris', date: '22/03/2022', amount: '110 USD', total: '39,876 USD', status: 'Delivered' },
+  { id: '0x7f1c...3a8e', product: 'Kunyit', customer: 'Michael Jenkins', date: '03/03/2022', amount: '75 USD', total: '55,432 USD', status: 'Delivered' },
+  { id: '0x4b9e...1d7f', product: 'Kayu Manis', customer: 'Tyler Moran', date: '01/02/2022', amount: '140 USD', total: '42,198 USD', status: 'Delivered' },
+  { id: '0x2c8d...5a6b', product: 'Lada Hitam', customer: 'Liam Melon', date: '19/01/2022', amount: '160 USD', total: '37,654 USD', status: 'Delivered' }
 ];
 
 const SellerWithdraw = () => {
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [entriesPerPage, setEntriesPerPage] = useState('10');
 
@@ -126,7 +128,14 @@ const SellerWithdraw = () => {
                       className="border-b border-border/30 hover:bg-muted/30 transition-colors animate-fade-in"
                       style={{ animationDelay: `${0.2 + index * 0.05}s` }}
                     >
-                      <td className="py-3 px-4 font-mono text-sm text-primary">{order.id}</td>
+                      <td className="py-3 px-4">
+                        <button 
+                          onClick={() => navigate(`/transaction/${order.id.split('...')[0]}`)}
+                          className="font-mono text-sm text-primary hover:underline cursor-pointer"
+                        >
+                          {order.id}
+                        </button>
+                      </td>
                       <td className="py-3 px-4">{order.product}</td>
                       <td className="py-3 px-4">{order.customer}</td>
                       <td className="py-3 px-4 text-muted-foreground">{order.date}</td>

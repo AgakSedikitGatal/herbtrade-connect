@@ -94,7 +94,7 @@ const Shop = () => {
                     <BarChart3 className="h-4 w-4" />
                     Total Volume
                   </div>
-                  <p className="text-xl font-bold">$124,500 <span className="text-xs text-primary">USDT</span></p>
+                  <p className="text-xl font-bold">$124,500 <span className="text-xs text-primary">USD</span></p>
                 </CardContent>
               </Card>
               <Card className="glass-card border-border/50 animate-fade-in" style={{ animationDelay: '50ms' }}>
@@ -136,7 +136,7 @@ const Shop = () => {
                 <div>
                   <h3 className="font-semibold mb-4 flex items-center gap-2">
                     <Coins className="h-4 w-4 text-primary" />
-                    Price Filter (USDT)
+                    Price Filter (USD)
                   </h3>
                   <div className="space-y-4">
                     <Slider
@@ -147,8 +147,8 @@ const Shop = () => {
                       className="w-full"
                     />
                     <div className="flex justify-between text-sm">
-                      <span className="font-mono text-primary">{priceRange[0]} USDT</span>
-                      <span className="font-mono text-primary">{priceRange[1]} USDT</span>
+                      <span className="font-mono text-primary">{priceRange[0]} USD</span>
+                      <span className="font-mono text-primary">{priceRange[1]} USD</span>
                     </div>
                     <Button variant="outline" className="w-full glass border-border/50 hover:bg-primary/10">
                       Apply Filter
@@ -305,11 +305,11 @@ const Shop = () => {
                             <span className="text-2xl font-bold text-primary font-mono">
                               {product.usdtPrice.toFixed(2)}
                             </span>
-                            <span className="text-sm text-primary">USDT</span>
+                            <span className="text-sm text-primary">USD</span>
                           </div>
                           <div className="flex items-center justify-between mt-2 pt-2 border-t border-border/50">
                             <span className="text-xs text-muted-foreground">24h Vol</span>
-                            <span className="text-xs font-mono">{product.volume24h} USDT</span>
+                            <span className="text-xs font-mono">{product.volume24h} USD</span>
                           </div>
                         </div>
 

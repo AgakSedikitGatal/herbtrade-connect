@@ -32,6 +32,7 @@ import AddProduct from "./pages/seller/AddProduct";
 import SellerOrders from "./pages/seller/Orders";
 import SellerAnalytics from "./pages/seller/Analytics";
 import SellerWithdraw from "./pages/seller/Withdraw";
+import TransactionDetail from "./pages/TransactionDetail";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -64,6 +65,7 @@ const AnimatedRoutes = () => {
         <Route path="/seller/orders" element={<PageTransition><SellerOrders /></PageTransition>} />
         <Route path="/seller/analytics" element={<PageTransition><SellerAnalytics /></PageTransition>} />
         <Route path="/seller/withdraw" element={<PageTransition><SellerWithdraw /></PageTransition>} />
+        <Route path="/transaction/:txHash" element={<PageTransition><TransactionDetail /></PageTransition>} />
         <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
       </Routes>
     </AnimatePresence>

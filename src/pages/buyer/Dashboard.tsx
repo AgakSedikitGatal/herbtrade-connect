@@ -6,7 +6,6 @@ import { Web3Footer } from "@/components/Web3Footer";
 import { Web3Background } from "@/components/Web3Background";
 import { Card, CardContent } from "@/components/ui/card";
 import { BlockchainStats } from "@/components/BlockchainStats";
-import { Portfolio } from "@/components/Portfolio";
 import { DashboardSkeleton } from "@/components/DashboardSkeleton";
 import { PageTransition } from "@/components/PageTransition";
 import { Package, ShoppingBag, Truck, Plus } from "lucide-react";
@@ -84,16 +83,6 @@ const BuyerDashboard = () => {
               ))}
             </div>
 
-            {/* Portfolio Section */}
-            <motion.div 
-              className="mb-8"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6 }}
-            >
-              <h2 className="text-2xl font-bold mb-6">Your Portfolio</h2>
-              <Portfolio />
-            </motion.div>
 
             {/* Blockchain Stats */}
             <motion.div

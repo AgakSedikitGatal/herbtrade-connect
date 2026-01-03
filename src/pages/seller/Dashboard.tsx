@@ -6,10 +6,9 @@ import { Web3Footer } from "@/components/Web3Footer";
 import { Web3Background } from "@/components/Web3Background";
 import { Card, CardContent } from "@/components/ui/card";
 import { BlockchainStats } from "@/components/BlockchainStats";
-import { Portfolio } from "@/components/Portfolio";
 import { DashboardSkeleton } from "@/components/DashboardSkeleton";
 import { PageTransition } from "@/components/PageTransition";
-import { Package, Plus, BarChart3, DollarSign, ShoppingCart, TrendingUp } from "lucide-react";
+import { Package, Plus, BarChart3, DollarSign, ShoppingCart, TrendingUp, Wallet, Building2, CreditCard, Smartphone } from "lucide-react";
 import { authService } from "@/lib/auth";
 
 const SellerDashboard = () => {
@@ -126,15 +125,55 @@ const SellerDashboard = () => {
               </div>
             </motion.div>
 
-            {/* Portfolio Section */}
+            {/* Withdraw Section */}
             <motion.div 
               className="mb-8"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 1.1 }}
             >
-              <h2 className="text-2xl font-bold mb-6">Your Portfolio</h2>
-              <Portfolio />
+              <h2 className="text-2xl font-bold mb-6">Withdraw Funds</h2>
+              <Card className="glass-card border-border/50">
+                <CardContent className="pt-6">
+                  <div className="flex items-center justify-between mb-6">
+                    <div>
+                      <p className="text-sm text-muted-foreground">Available Balance</p>
+                      <p className="text-3xl font-bold text-primary">$12,450.00</p>
+                    </div>
+                    <div className="p-4 bg-primary/20 rounded-xl glow-primary">
+                      <Wallet className="h-8 w-8 text-primary" />
+                    </div>
+                  </div>
+                  
+                  <p className="text-sm text-muted-foreground mb-4">Choose withdrawal method:</p>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {[
+                      { icon: Building2, title: "Bank Transfer", desc: "2-3 business days", color: "secondary" },
+                      { icon: CreditCard, title: "Credit/Debit Card", desc: "Instant withdrawal", color: "accent" },
+                      { icon: Smartphone, title: "Mobile Payment", desc: "E-wallet & QRIS", color: "info" },
+                    ].map((method, index) => (
+                      <Link to="/seller/withdraw" key={method.title}>
+                        <motion.div
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 1.2 + index * 0.1 }}
+                          className={`p-4 rounded-xl border border-border/50 bg-${method.color}/10 hover:bg-${method.color}/20 transition-all cursor-pointer`}
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className={`p-2 bg-${method.color}/20 rounded-lg`}>
+                              <method.icon className={`h-5 w-5 text-${method.color}`} />
+                            </div>
+                            <div>
+                              <p className="font-medium">{method.title}</p>
+                              <p className="text-xs text-muted-foreground">{method.desc}</p>
+                            </div>
+                          </div>
+                        </motion.div>
+                      </Link>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
             </motion.div>
 
             {/* Blockchain Stats */}

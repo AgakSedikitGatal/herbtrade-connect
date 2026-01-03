@@ -31,7 +31,7 @@ export const transactions: Transaction[] = [
     gasUsed: 21000,
     gasPrice: 25,
     status: 'success',
-    method: 'Crypto Wallet',
+    method: 'Bank Transfer',
     supplier: 'PT Herbal Nusantara',
     buyer: 'Matt Dickerson'
   },
@@ -65,7 +65,7 @@ export const transactions: Transaction[] = [
     gasUsed: 21000,
     gasPrice: 28,
     status: 'success',
-    method: 'Crypto Wallet',
+    method: 'Credit/Debit Card',
     supplier: 'Toko Rempah Tradisional',
     buyer: 'Trixia Raya'
   },
@@ -99,7 +99,7 @@ export const transactions: Transaction[] = [
     gasUsed: 21000,
     gasPrice: 26,
     status: 'pending',
-    method: 'Crypto Wallet',
+    method: 'Mobile Payment',
     supplier: 'CV Rempah Sejahtera',
     buyer: 'Robert Levy'
   },
@@ -133,7 +133,7 @@ export const transactions: Transaction[] = [
     gasUsed: 21000,
     gasPrice: 21,
     status: 'success',
-    method: 'Crypto Wallet',
+    method: 'Bank Transfer',
     supplier: 'PT Herbal Nusantara',
     buyer: 'Zaire Saris'
   },
@@ -167,7 +167,7 @@ export const transactions: Transaction[] = [
     gasUsed: 21000,
     gasPrice: 20,
     status: 'success',
-    method: 'Crypto Wallet',
+    method: 'Credit/Debit Card',
     supplier: 'Toko Rempah Tradisional',
     buyer: 'Tyler Moran'
   },

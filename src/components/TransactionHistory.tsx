@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle, Clock, ArrowRightLeft } from "lucide-react";
+import { hashFromSeed, shortenHash, shortenAddress, addressFromSeed, numberFromSeed, decimalFromSeed, statusFromSeed } from "@/lib/mockChain";
 
 interface Transaction {
   id: string;
@@ -9,29 +10,36 @@ interface Transaction {
   price: number;
   date: string;
   status: 'completed' | 'pending';
-  txHash: string;
+  txHashFull: string;
+  txHashDisplay: string;
   buyer: string;
   seller: string;
 }
 
-// Generate mock transaction history
+// Generate deterministic mock transaction history based on productId
 const generateTransactions = (productId: string): Transaction[] => {
   const transactions: Transaction[] = [];
   const now = new Date();
   
   for (let i = 0; i < 10; i++) {
+    const seed = `product-${productId}-tx-${i}`;
+    const txHashFull = hashFromSeed(seed);
     const date = new Date(now);
-    date.setHours(date.getHours() - i * Math.floor(Math.random() * 24));
+    // Use deterministic hour offset
+    date.setHours(date.getHours() - i * numberFromSeed(seed + '-hours', 1, 24));
     
-      transactions.push({
-        id: `TX${productId}${i}`,
-        amount: Math.floor(Math.random() * 50) + 1,
-      price: parseFloat((Math.random() * 20 + 5).toFixed(2)),
+    const status = statusFromSeed(seed);
+    
+    transactions.push({
+      id: `TX${productId}${i}`,
+      amount: numberFromSeed(seed + '-amount', 1, 50),
+      price: decimalFromSeed(seed + '-price', 5, 25),
       date: date.toISOString(),
-      status: Math.random() > 0.1 ? 'completed' : 'pending',
-      txHash: `0x${Math.random().toString(16).slice(2, 10)}...${Math.random().toString(16).slice(2, 6)}`,
-      buyer: `0x${Math.random().toString(16).slice(2, 8)}...${Math.random().toString(16).slice(2, 6)}`,
-      seller: `0x${Math.random().toString(16).slice(2, 8)}...${Math.random().toString(16).slice(2, 6)}`,
+      status: status === 'success' ? 'completed' : 'pending',
+      txHashFull,
+      txHashDisplay: shortenHash(txHashFull),
+      buyer: shortenAddress(addressFromSeed(seed, 0)),
+      seller: shortenAddress(addressFromSeed(seed, 1)),
     });
   }
   
@@ -60,7 +68,7 @@ export const TransactionHistory = ({ productId }: TransactionHistoryProps) => {
             <div
               key={tx.id}
               className="flex items-center justify-between p-3 rounded-lg bg-muted/30 border border-border/30 hover:border-primary/30 transition-colors cursor-pointer"
-              onClick={() => navigate(`/transaction/${tx.txHash.split('...')[0]}`)}
+              onClick={() => navigate(`/transaction/${tx.txHashFull}`)}
             >
               <div className="flex items-center gap-3">
                 <div className="p-2 rounded-full bg-primary/20">
@@ -82,7 +90,7 @@ export const TransactionHistory = ({ productId }: TransactionHistoryProps) => {
               <div className="text-right">
                 <div className="font-semibold text-sm">${(tx.amount * tx.price).toFixed(2)} USD</div>
                 <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
-                  <span className="font-mono text-primary hover:underline">{tx.txHash}</span>
+                  <span className="font-mono text-primary hover:underline">{tx.txHashDisplay}</span>
                 </div>
               </div>
               

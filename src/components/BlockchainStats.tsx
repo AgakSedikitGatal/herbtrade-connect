@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Box, ArrowRightLeft, Clock, CheckCircle, AlertCircle } from "lucide-react";
+import { hashFromSeed, addressFromSeed, shortenHash, shortenAddress, numberFromSeed, decimalFromSeed, statusFromSeed } from "@/lib/mockChain";
 
 interface Block {
   number: number;
@@ -13,32 +14,43 @@ interface Block {
 }
 
 interface Transaction {
-  hash: string;
-  from: string;
-  to: string;
+  hashFull: string;
+  hashDisplay: string;
+  fromDisplay: string;
+  toDisplay: string;
   value: string;
   status: "success" | "pending";
 }
 
-// Mock data generator
+// Get a stable time slot (changes every 12 seconds)
+const getTimeSlot = () => Math.floor(Date.now() / 12000);
+
+// Mock data generator with deterministic hashes
 const generateMockBlocks = (): Block[] => {
   const now = Date.now();
+  const slot = getTimeSlot();
   return Array.from({ length: 5 }, (_, i) => ({
     number: 19847520 - i,
     timestamp: new Date(now - i * 12000).toLocaleTimeString(),
-    transactions: Math.floor(Math.random() * 200) + 50,
-    hash: `0x${Math.random().toString(16).slice(2, 10)}...${Math.random().toString(16).slice(2, 6)}`,
+    transactions: numberFromSeed(`block-${slot}-${i}-txcount`, 50, 250),
+    hash: shortenHash(hashFromSeed(`block-${slot}-${i}`)),
   }));
 };
 
 const generateMockTransactions = (): Transaction[] => {
-  return Array.from({ length: 5 }, () => ({
-    hash: `0x${Math.random().toString(16).slice(2, 10)}...${Math.random().toString(16).slice(2, 6)}`,
-    from: `0x${Math.random().toString(16).slice(2, 8)}...${Math.random().toString(16).slice(2, 6)}`,
-    to: `0x${Math.random().toString(16).slice(2, 8)}...${Math.random().toString(16).slice(2, 6)}`,
-    value: (Math.random() * 500 + 50).toFixed(2) + " USD",
-    status: Math.random() > 0.2 ? "success" : "pending",
-  }));
+  const slot = getTimeSlot();
+  return Array.from({ length: 5 }, (_, i) => {
+    const seed = `latestTx-${slot}-${i}`;
+    const hashFull = hashFromSeed(seed);
+    return {
+      hashFull,
+      hashDisplay: shortenHash(hashFull),
+      fromDisplay: shortenAddress(addressFromSeed(seed, 0)),
+      toDisplay: shortenAddress(addressFromSeed(seed, 1)),
+      value: decimalFromSeed(seed, 50, 500).toFixed(2) + " USD",
+      status: statusFromSeed(seed),
+    };
+  });
 };
 
 export const BlockchainStats = () => {
@@ -131,16 +143,16 @@ export const BlockchainStats = () => {
                 <div
                   key={i}
                   className="flex items-center justify-between p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors cursor-pointer"
-                  onClick={() => navigate(`/transaction/${tx.hash.split('...')[0]}`)}
+                  onClick={() => navigate(`/transaction/${tx.hashFull}`)}
                 >
                   <div className="flex items-center gap-3">
                     <div className="p-2 bg-secondary/10 rounded">
                       <ArrowRightLeft className="h-4 w-4 text-secondary" />
                     </div>
                     <div>
-                      <p className="font-mono text-sm text-primary hover:underline">{tx.hash}</p>
+                      <p className="font-mono text-sm text-primary hover:underline">{tx.hashDisplay}</p>
                       <p className="text-xs text-muted-foreground">
-                        {tx.from} → {tx.to}
+                        {tx.fromDisplay} → {tx.toDisplay}
                       </p>
                     </div>
                   </div>

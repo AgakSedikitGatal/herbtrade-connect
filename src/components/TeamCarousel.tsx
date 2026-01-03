@@ -9,18 +9,18 @@ interface TeamMember {
 const teamMembers: TeamMember[] = [
   {
     name: "Raihan Adz Dzikra",
-    role: "Leader",
-    image: "yan.jpg",
+    role: "Project Manager",
+    image: "yan jas.jpeg",
   },
   {
     name: "Iriena Feyza Zafira Rosyidi",
     role: "Research and Development",
-    image: "zaf.jpg",
+    image: "zaf jas.PNG",
   },
   {
     name: "Fionna Nur Illahi",
     role: "Business Manager",
-    image: "fio.jpg",
+    image: "fio jas.jpeg",
   },
   {
     name: "Dustin Favian Baihaqi",
@@ -30,17 +30,17 @@ const teamMembers: TeamMember[] = [
   {
     name: "Aulia Rahmah Fitriah",
     role: "Research and Development",
-    image: "aul.JPG",
+    image: "aul jas.jpeg",
   },
   {
     name: "Muhammad Fariz Abid R",
     role: "Backend Developer",
-    image: "nyam.jpg",
+    image: "nyam jas.JPG",
   },
   {
     name: "Topan Suryadi Laga",
     role: "Frontend Developer",
-    image: "Topan.jpg",
+    image: "topan jas.png",
   }
 ];
 

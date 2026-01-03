@@ -58,15 +58,17 @@ const BuyerOrders = () => {
                       <ArrowRightLeft className="h-4 w-4 text-primary" />
                     </div>
                     <div>
+                    <div>
                       <button 
-                        onClick={() => navigate(`/transaction/${order.txHash || order.id}`)}
+                        onClick={() => navigate(`/transaction/${order.txHash}`)}
                         className="font-mono text-sm text-primary hover:underline cursor-pointer"
                       >
-                        {order.id}
+                        {order.txHash.slice(0, 10)}...{order.txHash.slice(-8)}
                       </button>
                       <p className="text-xs text-muted-foreground">
-                        {order.from} → {order.to}
+                        {order.from.slice(0, 6)}...{order.from.slice(-4)} → {order.to.slice(0, 6)}...{order.to.slice(-4)}
                       </p>
+                    </div>
                     </div>
                   </div>
                   
@@ -84,7 +86,7 @@ const BuyerOrders = () => {
                     </div>
                     
                     <div className="text-right flex flex-row md:flex-col items-center md:items-end gap-2">
-                      <p className="text-sm font-semibold text-primary">${order.price.toFixed(2)} USD</p>
+                      <p className="text-sm font-semibold text-primary">${order.totalAmount.toFixed(2)} USD</p>
                       <Badge
                         variant="outline"
                         className={getStatusColor(order.status)}

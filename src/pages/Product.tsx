@@ -9,7 +9,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Minus, Plus, ShoppingCart, MapPin, Shield, Star, Package, LogIn } from "lucide-react";
+import { Minus, Plus, ShoppingCart, MapPin, Shield, Star, Package, LogIn, MessageCircle } from "lucide-react";
 import { products } from "@/lib/products";
 import { toast } from "sonner";
 import { PriceChart } from "@/components/PriceChart";
@@ -29,6 +29,7 @@ const Product = () => {
   const [quantityUnit, setQuantityUnit] = useState("kg");
   const [purchaseType, setPurchaseType] = useState("one-time");
   const [showOrderModal, setShowOrderModal] = useState(false);
+  const [showChat, setShowChat] = useState(false);
 
   const isLoggedIn = authService.isAuthenticated();
 
@@ -222,6 +223,9 @@ const Product = () => {
               <p className="text-sm text-muted-foreground">
                 Available stock: <span className="text-foreground font-medium">{product.supplier.stock.toLocaleString()} KG</span>
               </p>
+              <p className="text-sm font-medium text-accent">
+                Min. Order: {product.minOrder.quantity.toLocaleString()} {product.minOrder.unit}
+              </p>
             </div>
 
             {/* Purchase Options */}
@@ -255,6 +259,17 @@ const Product = () => {
                 Buy Now - ${calculatePrice().toFixed(2)} USDT
               </Button>
             </div>
+
+            {/* Contact Supplier Button */}
+            <Button 
+              size="lg" 
+              variant="outline" 
+              className="w-full glass border-border/50 hover:bg-primary/10 gap-2"
+              onClick={() => setShowChat(true)}
+            >
+              <MessageCircle className="h-5 w-5" />
+              Contact Supplier
+            </Button>
 
             {/* Specifications */}
             <Card className="glass-card border-border/50">
@@ -316,6 +331,8 @@ const Product = () => {
       <SupplierChat 
         supplierName={product.supplier.name} 
         productName={product.name}
+        isOpen={showChat}
+        onOpenChange={setShowChat}
       />
 
       <OrderPlacement

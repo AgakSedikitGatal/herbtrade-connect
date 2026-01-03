@@ -2,37 +2,21 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, Wallet, LogOut, User, Copy, ExternalLink, Coins } from "lucide-react";
+import { Menu, LogOut, User } from "lucide-react";
 import { authService } from "@/lib/auth";
-import { useWallet } from "@/hooks/useWallet";
-import { toast } from "@/hooks/use-toast";
-import { WalletConnectModal } from "@/components/WalletConnectModal";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
-  DropdownMenuLabel,
 } from "@/components/ui/dropdown-menu";
 
 export const Web3Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const [showWalletModal, setShowWalletModal] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const user = authService.getUser();
-  const { 
-    address, 
-    isConnected, 
-    isConnecting, 
-    connectWallet, 
-    disconnectWallet, 
-    shortenAddress,
-    ethBalance,
-    tokenBalances
-  } = useWallet();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -57,28 +41,6 @@ export const Web3Header = () => {
       }
     }
     setIsOpen(false);
-  };
-
-  const copyAddress = () => {
-    if (address) {
-      navigator.clipboard.writeText(address);
-      toast({
-        title: "Address Copied",
-        description: "Wallet address copied to clipboard.",
-      });
-    }
-  };
-
-  const viewOnExplorer = () => {
-    if (address) {
-      window.open(`https://etherscan.io/address/${address}`, "_blank");
-    }
-  };
-
-  const handleWalletConnect = (walletId: string) => {
-    if (walletId === "metamask") {
-      connectWallet();
-    }
   };
 
   const navLinks = [
@@ -160,66 +122,6 @@ export const Web3Header = () => {
                 </Link>
               )}
 
-              {/* Wallet Connection */}
-              {isConnected && address ? (
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button className="btn-web3 gap-2 py-2 px-4">
-                      <div className="h-2 w-2 bg-green-500 rounded-full animate-pulse" />
-                      {shortenAddress(address)}
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="glass min-w-[240px]">
-                    <DropdownMenuLabel className="text-xs text-muted-foreground">
-                      Connected Wallet
-                    </DropdownMenuLabel>
-                    
-                    {/* Balance Display */}
-                    <div className="px-2 py-3 border-b border-border/50">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm text-muted-foreground">ETH Balance</span>
-                        <span className="font-mono font-semibold">{ethBalance || "0.0000"} ETH</span>
-                      </div>
-                      {tokenBalances.length > 0 && (
-                        <div className="space-y-1">
-                          {tokenBalances.map((token) => (
-                            <div key={token.symbol} className="flex items-center justify-between text-sm">
-                              <span className="text-muted-foreground flex items-center gap-1">
-                                <Coins className="h-3 w-3" />
-                                {token.symbol}
-                              </span>
-                              <span className="font-mono">{token.balance}</span>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                    
-                    <DropdownMenuItem onClick={copyAddress}>
-                      <Copy className="h-4 w-4 mr-2" />
-                      Copy Address
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={viewOnExplorer}>
-                      <ExternalLink className="h-4 w-4 mr-2" />
-                      View on Etherscan
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={disconnectWallet} className="text-destructive">
-                      <LogOut className="h-4 w-4 mr-2" />
-                      Disconnect
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              ) : (
-                <Button 
-                  className="btn-web3 gap-2 py-2 px-4" 
-                  onClick={() => setShowWalletModal(true)}
-                  disabled={isConnecting}
-                >
-                  <Wallet className="h-4 w-4" />
-                  {isConnecting ? "Connecting..." : "Connect Wallet"}
-                </Button>
-              )}
             </div>
 
             {/* Mobile Menu */}
@@ -274,42 +176,6 @@ export const Web3Header = () => {
                       </Link>
                     )}
                     
-                    {/* Mobile Wallet */}
-                    {isConnected && address ? (
-                      <div className="space-y-3">
-                        <div className="p-3 rounded-lg glass border border-border/50">
-                          <div className="flex items-center gap-2 mb-2">
-                            <div className="h-2 w-2 bg-green-500 rounded-full animate-pulse" />
-                            <span className="text-sm font-mono">{shortenAddress(address)}</span>
-                          </div>
-                          <div className="text-sm text-muted-foreground">
-                            <p>ETH: {ethBalance || "0.0000"}</p>
-                            {tokenBalances.slice(0, 2).map((token) => (
-                              <p key={token.symbol}>{token.symbol}: {token.balance}</p>
-                            ))}
-                          </div>
-                        </div>
-                        <Button 
-                          onClick={disconnectWallet} 
-                          variant="outline" 
-                          className="w-full text-destructive"
-                        >
-                          Disconnect Wallet
-                        </Button>
-                      </div>
-                    ) : (
-                      <Button 
-                        className="btn-web3 w-full gap-2" 
-                        onClick={() => {
-                          setIsOpen(false);
-                          setShowWalletModal(true);
-                        }}
-                        disabled={isConnecting}
-                      >
-                        <Wallet className="h-4 w-4" />
-                        {isConnecting ? "Connecting..." : "Connect Wallet"}
-                      </Button>
-                    )}
                   </div>
                 </nav>
               </SheetContent>
@@ -317,12 +183,6 @@ export const Web3Header = () => {
           </div>
         </div>
       </header>
-
-      <WalletConnectModal
-        isOpen={showWalletModal}
-        onClose={() => setShowWalletModal(false)}
-        onConnect={handleWalletConnect}
-      />
     </>
   );
 };

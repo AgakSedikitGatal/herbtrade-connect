@@ -2,6 +2,7 @@ import { useParams, Link } from "react-router-dom";
 import { Web3Header } from "@/components/Web3Header";
 import { Web3Footer } from "@/components/Web3Footer";
 import { Web3Background } from "@/components/Web3Background";
+import { ShipmentMap } from "@/components/ShipmentMap";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -308,12 +309,17 @@ const Tracking = () => {
           </Card>
         </div>
 
-        {/* Location Tracking */}
-        <Card className="mt-8 glass-card border-border/50 animate-fade-in" style={{ animationDelay: "0.5s" }}>
+        {/* Map View */}
+        <div className="mt-8 animate-fade-in" style={{ animationDelay: "0.5s" }}>
+          <ShipmentMap />
+        </div>
+
+        {/* Location Tracking Table */}
+        <Card className="mt-8 glass-card border-border/50 animate-fade-in" style={{ animationDelay: "0.6s" }}>
           <CardContent className="pt-6">
             <h3 className="text-xl font-semibold mb-6 flex items-center gap-2">
               <MapPin className="h-5 w-5 text-primary" />
-              Shipment Route
+              Shipment Route Details
             </h3>
             <div className="overflow-x-auto">
               <table className="w-full">

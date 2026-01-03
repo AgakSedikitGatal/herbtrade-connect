@@ -34,10 +34,24 @@ const generateTxHash = () => {
   return hash;
 };
 
+// Migration function to ensure old cart items have txHash
+const migrateCartItems = (items: any[]): CartItem[] => {
+  return items.map(item => ({
+    ...item,
+    txHash: item.txHash || generateTxHash(),
+    requestDate: item.requestDate || new Date().toISOString(),
+    status: item.status || 'pending',
+  }));
+};
+
 export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [cartItems, setCartItems] = useState<CartItem[]>(() => {
     const saved = localStorage.getItem('herbal-cart');
-    return saved ? JSON.parse(saved) : [];
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      return migrateCartItems(parsed);
+    }
+    return [];
   });
 
   useEffect(() => {

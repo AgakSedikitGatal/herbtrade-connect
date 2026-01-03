@@ -24,7 +24,7 @@ export interface Order {
 
 interface OrderContextType {
   orders: Order[];
-  addOrder: (order: Omit<Order, 'id' | 'date' | 'from' | 'to' | 'txHash' | 'blockNumber' | 'timestamp' | 'gasUsed' | 'gasPrice' | 'buyer'>) => void;
+  addOrder: (order: Omit<Order, 'id' | 'date' | 'from' | 'to' | 'txHash' | 'blockNumber' | 'timestamp' | 'gasUsed' | 'gasPrice' | 'buyer'>) => Order;
   updateOrderStatus: (id: string, status: Order['status']) => void;
   clearOrders: () => void;
   getOrderByTxHash: (txHash: string) => Order | undefined;
@@ -85,7 +85,7 @@ export const OrderProvider = ({ children }: { children: ReactNode }) => {
     localStorage.setItem('herbal-orders', JSON.stringify(orders));
   }, [orders]);
 
-  const addOrder = (order: Omit<Order, 'id' | 'date' | 'from' | 'to' | 'txHash' | 'blockNumber' | 'timestamp' | 'gasUsed' | 'gasPrice' | 'buyer'>) => {
+  const addOrder = (order: Omit<Order, 'id' | 'date' | 'from' | 'to' | 'txHash' | 'blockNumber' | 'timestamp' | 'gasUsed' | 'gasPrice' | 'buyer'>): Order => {
     const txHash = generateTxHash();
     const fromAddr = generateWalletAddress();
     const toAddr = generateWalletAddress();
@@ -105,6 +105,7 @@ export const OrderProvider = ({ children }: { children: ReactNode }) => {
       gasPrice: (20 + Math.floor(Math.random() * 30)).toString(),
     };
     setOrders(prev => [newOrder, ...prev]);
+    return newOrder;
   };
 
   const updateOrderStatus = (id: string, status: Order['status']) => {

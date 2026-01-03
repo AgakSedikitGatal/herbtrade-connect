@@ -22,7 +22,32 @@ import {
 } from "lucide-react";
 import { getTransactionByHash, formatAddress, Transaction } from "@/lib/transactions";
 import { useOrders, Order } from "@/contexts/OrderContext";
+import { useCart, CartItem } from "@/contexts/CartContext";
 import { toast } from "sonner";
+
+// Helper to generate deterministic blockchain data from txHash
+const generateDeterministicData = (txHash: string) => {
+  let seed = 0;
+  for (let i = 0; i < txHash.length; i++) {
+    seed = ((seed << 5) - seed) + txHash.charCodeAt(i);
+    seed = seed & seed;
+  }
+  const blockNumber = 19000000 + Math.abs(seed % 500000);
+  const gasUsed = 21000 + Math.abs((seed >> 8) % 50000);
+  const gasPrice = 20 + Math.abs((seed >> 16) % 30);
+  
+  // Generate addresses from seed
+  const generateAddr = (offset: number) => {
+    let addr = '0x';
+    for (let i = 0; i < 40; i++) {
+      const char = Math.abs((seed + offset + i) % 16);
+      addr += char.toString(16);
+    }
+    return addr;
+  };
+  
+  return { blockNumber, gasUsed, gasPrice, from: generateAddr(100), to: generateAddr(200), buyer: generateAddr(300) };
+};
 
 // Convert Order to Transaction format
 const orderToTransaction = (order: Order): Transaction => ({
@@ -43,16 +68,57 @@ const orderToTransaction = (order: Order): Transaction => ({
   buyer: order.buyer.slice(0, 6) + '...' + order.buyer.slice(-4),
 });
 
+// Convert CartItem to Transaction format
+const cartItemToTransaction = (item: CartItem): Transaction => {
+  const data = generateDeterministicData(item.txHash || item.id);
+  return {
+    txHash: item.txHash || item.id,
+    blockNumber: data.blockNumber,
+    timestamp: item.requestDate,
+    from: data.from,
+    to: data.to,
+    product: item.productName,
+    quantity: item.quantity,
+    pricePerUnit: item.price,
+    totalAmount: item.price,
+    gasUsed: data.gasUsed,
+    gasPrice: data.gasPrice,
+    status: item.status === 'completed' ? 'success' : 'pending',
+    method: 'Purchase Request',
+    supplier: item.supplier,
+    buyer: data.buyer.slice(0, 6) + '...' + data.buyer.slice(-4),
+  };
+};
+
 const TransactionDetail = () => {
   const { txHash } = useParams();
   const navigate = useNavigate();
   const { getOrderByTxHash } = useOrders();
+  const { cartItems } = useCart();
   
-  // First check localStorage orders, then static transactions
+  // Helper to find cart item by txHash
+  const getCartItemByTxHash = (hash: string): CartItem | undefined => {
+    return cartItems.find(item => {
+      if (item.txHash === hash) return true;
+      if (item.txHash?.toLowerCase().startsWith(hash.toLowerCase().replace('...', ''))) return true;
+      if (hash.includes('...')) {
+        const [start, end] = hash.split('...');
+        return item.txHash?.toLowerCase().startsWith(start.toLowerCase()) && 
+               item.txHash?.toLowerCase().endsWith(end.toLowerCase());
+      }
+      return false;
+    });
+  };
+  
+  // Check sources in order: OrderContext -> CartContext -> Static transactions
   const orderFromContext = txHash ? getOrderByTxHash(txHash) : undefined;
+  const cartItemFromContext = txHash && !orderFromContext ? getCartItemByTxHash(txHash) : undefined;
+  
   const transaction = orderFromContext 
     ? orderToTransaction(orderFromContext)
-    : (txHash ? getTransactionByHash(txHash) : undefined);
+    : cartItemFromContext
+      ? cartItemToTransaction(cartItemFromContext)
+      : (txHash ? getTransactionByHash(txHash) : undefined);
 
   const copyToClipboard = (text: string, label: string) => {
     navigator.clipboard.writeText(text);

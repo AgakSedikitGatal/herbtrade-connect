@@ -1,29 +1,26 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { useOrders } from "@/contexts/OrderContext";
 import { 
-  Wallet, 
   Shield, 
   Clock, 
   CheckCircle2, 
   Loader2, 
-  FileText,
   ArrowRight,
   Lock,
   Zap,
   Building2,
   CreditCard,
-  Smartphone
+  Smartphone,
+  Wallet
 } from "lucide-react";
-import { LoadingSpinner } from "@/components/ui/loading-spinner";
 
 interface OrderPlacementProps {
   isOpen: boolean;
@@ -61,7 +58,6 @@ export const OrderPlacement = ({
 
   const paymentMethods = [
     { id: 'bank', name: 'Bank Transfer', icon: Building2, description: 'Direct bank transfer' },
-    { id: 'wallet', name: 'Crypto Wallet', icon: Wallet, description: 'Pay with crypto' },
     { id: 'card', name: 'Credit/Debit Card', icon: CreditCard, description: 'Visa, Mastercard' },
     { id: 'mobile', name: 'Mobile Payment', icon: Smartphone, description: 'E-wallet & mobile banking' },
   ];
@@ -316,14 +312,12 @@ export const OrderPlacement = ({
           </div>
           <div className="flex justify-between text-sm">
             <span className="text-muted-foreground">Transaction Hash</span>
-            <a 
-              href={`https://etherscan.io/tx/${txHash}`}
-              target="_blank"
-              rel="noopener noreferrer"
+            <Link 
+              to={`/transaction/${txHash}`}
               className="font-mono text-primary hover:underline"
             >
               {txHash.slice(0, 10)}...{txHash.slice(-8)}
-            </a>
+            </Link>
           </div>
           <div className="flex justify-between text-sm">
             <span className="text-muted-foreground">Status</span>

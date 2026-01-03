@@ -54,10 +54,31 @@ const generateBlockNumber = () => {
   return 19000000 + Math.floor(Math.random() * 500000);
 };
 
+// Migration function to update old orders with missing fields
+const migrateOrders = (oldOrders: any[]): Order[] => {
+  return oldOrders.map(order => ({
+    ...order,
+    txHash: order.txHash || generateTxHash(),
+    blockNumber: order.blockNumber || generateBlockNumber(),
+    timestamp: order.timestamp || order.date || new Date().toISOString(),
+    pricePerUnit: order.pricePerUnit || 0,
+    totalAmount: order.totalAmount || order.price || 0,
+    buyer: order.buyer || generateWalletAddress(),
+    from: order.from || generateWalletAddress(),
+    to: order.to || generateWalletAddress(),
+    gasUsed: order.gasUsed || (21000 + Math.floor(Math.random() * 50000)).toString(),
+    gasPrice: order.gasPrice || (20 + Math.floor(Math.random() * 30)).toString(),
+  }));
+};
+
 export const OrderProvider = ({ children }: { children: ReactNode }) => {
   const [orders, setOrders] = useState<Order[]>(() => {
     const saved = localStorage.getItem('herbal-orders');
-    return saved ? JSON.parse(saved) : [];
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      return migrateOrders(parsed);
+    }
+    return [];
   });
 
   useEffect(() => {

@@ -75,7 +75,20 @@ const Tracking = () => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [lastUpdated, setLastUpdated] = useState(new Date());
 
-  const order = cartItems.find(item => item.id === orderId) || {
+  const cartOrder = cartItems.find(item => item.id === orderId);
+  
+  // Generate consistent txHash based on orderId for demo orders
+  const generateConsistentTxHash = (id: string) => {
+    const seed = id || 'demo';
+    let hash = '0x';
+    for (let i = 0; i < 64; i++) {
+      const charCode = seed.charCodeAt(i % seed.length) + i;
+      hash += (charCode % 16).toString(16);
+    }
+    return hash;
+  };
+
+  const order = cartOrder || {
     id: orderId || "demo-order",
     productName: "Curcuma longa (Turmeric)",
     scientificName: "Curcuma longa",
@@ -83,7 +96,7 @@ const Tracking = () => {
     quantity: "50 kg",
     supplier: "Java Herbs Co.",
     supplierId: "SUP001",
-    txHash: "0x8f4e9a2b3c5d7e8f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f",
+    txHash: generateConsistentTxHash(orderId || "demo-order"),
     status: "processing",
     requestDate: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString(),
     image: "/turmeric.jpg"

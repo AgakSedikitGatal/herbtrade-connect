@@ -275,7 +275,7 @@ export const AIChatAssistant = ({ role }: AIChatAssistantProps) => {
             </div>
 
             {/* Messages */}
-            <ScrollArea className="flex-1 p-4 max-h-[340px]" ref={scrollRef}>
+            <div className="flex-1 overflow-y-auto p-4 max-h-[340px]" ref={scrollRef}>
               <div className="space-y-4">
                 {messages.map((msg) => (
                   <div
@@ -309,7 +309,7 @@ export const AIChatAssistant = ({ role }: AIChatAssistantProps) => {
                   </div>
                 )}
               </div>
-            </ScrollArea>
+            </div>
 
             {/* Quick Actions */}
             <div className="px-4 py-2 flex gap-2 flex-wrap border-t border-border/30">

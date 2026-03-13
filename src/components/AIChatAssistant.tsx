@@ -309,7 +309,7 @@ export const AIChatAssistant = ({ role }: AIChatAssistantProps) => {
                   </div>
                 )}
               </div>
-            </ScrollArea>
+            </div>
 
             {/* Quick Actions */}
             <div className="px-4 py-2 flex gap-2 flex-wrap border-t border-border/30">

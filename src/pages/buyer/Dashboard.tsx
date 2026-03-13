@@ -99,6 +99,7 @@ const BuyerDashboard = () => {
       )}
 
       <Web3Footer />
+      <AIChatAssistant role="buyer" />
     </div>
   );
 };

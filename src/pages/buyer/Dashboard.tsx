@@ -10,6 +10,7 @@ import { DashboardSkeleton } from "@/components/DashboardSkeleton";
 import { PageTransition } from "@/components/PageTransition";
 import { Package, ShoppingBag, Truck, Plus } from "lucide-react";
 import { authService } from "@/lib/auth";
+import { AIChatAssistant } from "@/components/AIChatAssistant";
 
 const BuyerDashboard = () => {
   const user = authService.getUser();
@@ -98,6 +99,7 @@ const BuyerDashboard = () => {
       )}
 
       <Web3Footer />
+      <AIChatAssistant role="buyer" />
     </div>
   );
 };

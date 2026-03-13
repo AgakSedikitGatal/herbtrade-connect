@@ -10,6 +10,7 @@ import { DashboardSkeleton } from "@/components/DashboardSkeleton";
 import { PageTransition } from "@/components/PageTransition";
 import { Package, Plus, BarChart3, DollarSign, ShoppingCart, TrendingUp, Wallet, Building2, CreditCard, Smartphone } from "lucide-react";
 import { authService } from "@/lib/auth";
+import { AIChatAssistant } from "@/components/AIChatAssistant";
 
 const SellerDashboard = () => {
   const user = authService.getUser();

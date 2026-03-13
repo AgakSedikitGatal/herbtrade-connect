@@ -30,7 +30,7 @@ export const useRealtimeTransactions = (options: UseRealtimeTransactionsOptions 
   const [isConnected, setIsConnected] = useState(false);
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
   const transactionCounterRef = useRef(0);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // Generate a new transaction
   const generateTransaction = useCallback((): RealtimeTransaction => {

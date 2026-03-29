@@ -32,6 +32,8 @@ import AddProduct from "./pages/seller/AddProduct";
 import SellerOrders from "./pages/seller/Orders";
 import SellerAnalytics from "./pages/seller/Analytics";
 import SellerWithdraw from "./pages/seller/Withdraw";
+import BuyerAIAssistant from "./pages/buyer/AIAssistant";
+import SellerAIAssistant from "./pages/seller/AIAssistant";
 import TransactionDetail from "./pages/TransactionDetail";
 import NotFound from "./pages/NotFound";
 

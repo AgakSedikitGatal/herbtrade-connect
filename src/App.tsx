@@ -32,6 +32,8 @@ import AddProduct from "./pages/seller/AddProduct";
 import SellerOrders from "./pages/seller/Orders";
 import SellerAnalytics from "./pages/seller/Analytics";
 import SellerWithdraw from "./pages/seller/Withdraw";
+import BuyerAIAssistant from "./pages/buyer/AIAssistant";
+import SellerAIAssistant from "./pages/seller/AIAssistant";
 import TransactionDetail from "./pages/TransactionDetail";
 import NotFound from "./pages/NotFound";
 
@@ -59,12 +61,14 @@ const AnimatedRoutes = () => {
         <Route path="/buyer/dashboard" element={<BuyerDashboard />} />
         <Route path="/buyer/requests" element={<PageTransition><BuyerRequests /></PageTransition>} />
         <Route path="/buyer/orders" element={<PageTransition><BuyerOrders /></PageTransition>} />
+        <Route path="/buyer/ai-assistant" element={<PageTransition><BuyerAIAssistant /></PageTransition>} />
         <Route path="/seller/dashboard" element={<SellerDashboard />} />
         <Route path="/seller/products" element={<PageTransition><SellerProducts /></PageTransition>} />
         <Route path="/seller/add-product" element={<PageTransition><AddProduct /></PageTransition>} />
         <Route path="/seller/orders" element={<PageTransition><SellerOrders /></PageTransition>} />
         <Route path="/seller/analytics" element={<PageTransition><SellerAnalytics /></PageTransition>} />
         <Route path="/seller/withdraw" element={<PageTransition><SellerWithdraw /></PageTransition>} />
+        <Route path="/seller/ai-assistant" element={<PageTransition><SellerAIAssistant /></PageTransition>} />
         <Route path="/transaction/:txHash" element={<PageTransition><TransactionDetail /></PageTransition>} />
         <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
       </Routes>

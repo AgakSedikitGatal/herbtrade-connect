@@ -68,6 +68,7 @@ const AnimatedRoutes = () => {
         <Route path="/seller/orders" element={<PageTransition><SellerOrders /></PageTransition>} />
         <Route path="/seller/analytics" element={<PageTransition><SellerAnalytics /></PageTransition>} />
         <Route path="/seller/withdraw" element={<PageTransition><SellerWithdraw /></PageTransition>} />
+        <Route path="/seller/ai-assistant" element={<PageTransition><SellerAIAssistant /></PageTransition>} />
         <Route path="/transaction/:txHash" element={<PageTransition><TransactionDetail /></PageTransition>} />
         <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
       </Routes>

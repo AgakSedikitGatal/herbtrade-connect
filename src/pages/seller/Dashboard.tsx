@@ -97,6 +97,7 @@ const SellerDashboard = () => {
                   { to: "/seller/products", icon: Package, title: "My Products", desc: "Manage your listings", color: "secondary", glow: "glow-secondary" },
                   { to: "/seller/orders", icon: ShoppingCart, title: "Orders", desc: "View & fulfill orders", color: "accent", glow: "" },
                   { to: "/seller/analytics", icon: BarChart3, title: "Analytics", desc: "View performance", color: "info", glow: "" },
+                  { to: "/seller/ai-assistant", icon: BarChart3, title: "AI Assistant", desc: "Smart business insights", color: "primary", glow: "glow-primary" },
                 ].map((item, index) => (
                   <motion.div
                     key={item.to}

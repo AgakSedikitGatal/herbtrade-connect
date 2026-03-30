@@ -191,7 +191,6 @@ const SellerDashboard = () => {
       )}
 
       <Web3Footer />
-      <AIChatAssistant role="seller" />
     </div>
   );
 };

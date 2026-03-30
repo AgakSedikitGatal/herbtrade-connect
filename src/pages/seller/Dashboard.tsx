@@ -8,9 +8,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { BlockchainStats } from "@/components/BlockchainStats";
 import { DashboardSkeleton } from "@/components/DashboardSkeleton";
 import { PageTransition } from "@/components/PageTransition";
-import { Package, Plus, BarChart3, DollarSign, ShoppingCart, TrendingUp, Wallet, Building2, CreditCard, Smartphone } from "lucide-react";
+import { Package, Plus, BarChart3, DollarSign, ShoppingCart, TrendingUp, Wallet, Building2, CreditCard, Smartphone, Bot } from "lucide-react";
 import { authService } from "@/lib/auth";
-import { AIChatAssistant } from "@/components/AIChatAssistant";
 
 const SellerDashboard = () => {
   const user = authService.getUser();
@@ -97,6 +96,7 @@ const SellerDashboard = () => {
                   { to: "/seller/products", icon: Package, title: "My Products", desc: "Manage your listings", color: "secondary", glow: "glow-secondary" },
                   { to: "/seller/orders", icon: ShoppingCart, title: "Orders", desc: "View & fulfill orders", color: "accent", glow: "" },
                   { to: "/seller/analytics", icon: BarChart3, title: "Analytics", desc: "View performance", color: "info", glow: "" },
+                  { to: "/seller/ai-assistant", icon: Bot, title: "AI Assistant", desc: "Get business insights", color: "primary", glow: "glow-primary" },
                 ].map((item, index) => (
                   <motion.div
                     key={item.to}
@@ -191,7 +191,6 @@ const SellerDashboard = () => {
       )}
 
       <Web3Footer />
-      <AIChatAssistant role="seller" />
     </div>
   );
 };

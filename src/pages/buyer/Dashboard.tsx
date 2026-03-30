@@ -8,9 +8,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { BlockchainStats } from "@/components/BlockchainStats";
 import { DashboardSkeleton } from "@/components/DashboardSkeleton";
 import { PageTransition } from "@/components/PageTransition";
-import { Package, ShoppingBag, Truck, Plus } from "lucide-react";
+import { Package, ShoppingBag, Truck, Plus, Bot } from "lucide-react";
 import { authService } from "@/lib/auth";
-import { AIChatAssistant } from "@/components/AIChatAssistant";
 
 const BuyerDashboard = () => {
   const user = authService.getUser();
@@ -56,6 +55,7 @@ const BuyerDashboard = () => {
                 { to: "/buyer/requests", icon: ShoppingBag, title: "Buyer Requests", desc: "View your requests", color: "secondary", glow: "glow-secondary" },
                 { to: "/buyer/orders", icon: Package, title: "Order History", desc: "Track your orders", color: "accent", glow: "" },
                 { to: "/tracking", icon: Truck, title: "Track Shipment", desc: "Monitor deliveries", color: "info", glow: "" },
+                { to: "/buyer/ai-assistant", icon: Bot, title: "AI Assistant", desc: "Get recommendations", color: "primary", glow: "glow-primary" },
               ].map((item, index) => (
                 <motion.div
                   key={item.to}
@@ -99,7 +99,6 @@ const BuyerDashboard = () => {
       )}
 
       <Web3Footer />
-      <AIChatAssistant role="buyer" />
     </div>
   );
 };

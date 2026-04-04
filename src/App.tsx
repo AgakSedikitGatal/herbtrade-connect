@@ -36,6 +36,7 @@ import SellerWithdraw from "./pages/seller/Withdraw";
 import BuyerAIAssistant from "./pages/buyer/AIAssistant";
 import SellerAIAssistant from "./pages/seller/AIAssistant";
 import TransactionDetail from "./pages/TransactionDetail";
+import ProductRequest from "./pages/buyer/ProductRequest";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();

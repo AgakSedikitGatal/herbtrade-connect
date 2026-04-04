@@ -362,6 +362,12 @@ const Shop = () => {
                             🔥 Hot Deal
                           </div>
                         )}
+
+                        {isProductInSeason(product.id) && (
+                          <div className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-primary/20 text-primary border border-primary/30">
+                            🌿 In Season {isProductInPeakSeason(product.id) ? '(Peak)' : ''}
+                          </div>
+                        )}
                       </div>
                     </CardContent>
                     <CardFooter className="gap-2 px-4 pb-4">

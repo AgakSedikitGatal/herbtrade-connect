@@ -56,6 +56,7 @@ const BuyerDashboard = () => {
                 { to: "/buyer/orders", icon: Package, title: "Order History", desc: "Track your orders", color: "accent", glow: "" },
                 { to: "/tracking", icon: Truck, title: "Track Shipment", desc: "Monitor deliveries", color: "info", glow: "" },
                 { to: "/buyer/ai-assistant", icon: Bot, title: "AI Assistant", desc: "Get recommendations", color: "primary", glow: "glow-primary" },
+                { to: "/buyer/product-request", icon: FileText, title: "Product Request", desc: "Request products", color: "secondary", glow: "glow-secondary" },
               ].map((item, index) => (
                 <motion.div
                   key={item.to}

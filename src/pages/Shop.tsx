@@ -78,6 +78,39 @@ const Shop = () => {
         {/* Live Price Ticker */}
         <LivePriceTicker productIds={['CL001', 'AP001', 'CV001', 'PN001', 'MF001']} />
 
+        {/* Seasonal Banner */}
+        {(() => {
+          const currentSeason = getCurrentSeason();
+          const seasonalIds = getSeasonalProductIds();
+          const seasonalProducts = products.filter(p => seasonalIds.includes(p.id));
+          if (seasonalProducts.length === 0) return null;
+          return (
+            <Card className="glass-card border-primary/30 mb-8 overflow-hidden">
+              <CardContent className="pt-4 pb-4">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="p-2 bg-primary/20 rounded-lg">
+                    <Leaf className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold">🌿 Currently In Season — {currentSeason.nameId}</h3>
+                    <p className="text-xs text-muted-foreground">{currentSeason.description}</p>
+                  </div>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {seasonalProducts.map(p => (
+                    <Link key={p.id} to={`/product/${p.id}`}>
+                      <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-sm hover:bg-primary/20 transition-colors">
+                        <span className="font-medium">{p.name}</span>
+                        <span className="text-xs text-muted-foreground">${p.price}/kg</span>
+                        {isProductInPeakSeason(p.id) && <span className="text-xs text-primary font-semibold">🔥 Peak</span>}
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })()}
         {/* Market Stats Header */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           {isLoading ? (

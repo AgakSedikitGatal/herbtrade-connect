@@ -188,10 +188,13 @@ export const products: Product[] = [
       totalSales: 780,
       stock: 2800,
       verified: true
-    }
+    },
+    reviews: [
+      { user: "Hendra T.", rating: 4, comment: "Piperine content bagus, aroma kuat.", date: "2025-11-28" },
+      { user: "Yuni K.", rating: 5, comment: "Pengiriman dari Medan cepat, packaging aman.", date: "2025-10-15" },
+      { user: "Farid N.", rating: 4, comment: "Harga sedikit di atas rata-rata tapi kualitas worth it.", date: "2025-09-30" }
+    ]
   },
-  {
-    id: 'MF001',
     name: 'Nutmeg',
     scientificName: 'Myristica fragrans',
     price: 22.50,

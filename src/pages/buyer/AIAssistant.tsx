@@ -6,9 +6,10 @@ import { PageTransition } from "@/components/PageTransition";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Bot, Send, Sparkles, ShoppingBag, DollarSign, Users, Leaf, ArrowLeft } from "lucide-react";
+import { Bot, Send, Sparkles, ShoppingBag, DollarSign, Users, Leaf, ArrowLeft, Star, Calendar } from "lucide-react";
 import { Link } from "react-router-dom";
 import { products, categories } from "@/lib/products";
+import { getCurrentSeason, getSeasonalProductIds, getUpcomingHarvestProducts, getProductSeasonInfo, getMonthName, getCurrentMonth } from "@/lib/seasons";
 import { motion } from "framer-motion";
 
 interface Message {
@@ -25,24 +26,75 @@ function generateBuyerResponse(input: string): string {
   );
 
   if (matchedProduct) {
+    const avgRating = matchedProduct.reviews.length > 0
+      ? (matchedProduct.reviews.reduce((s, r) => s + r.rating, 0) / matchedProduct.reviews.length).toFixed(1)
+      : "N/A";
+    const seasonInfo = getProductSeasonInfo(matchedProduct.id);
+    const seasonText = seasonInfo
+      ? `\n- **Musim Panen:** ${seasonInfo.harvestMonths.map(m => getMonthName(m)).join(', ')}\n- **Status:** ${seasonInfo.harvestMonths.includes(getCurrentMonth()) ? '🌿 Sedang musim panen!' : '⏳ Belum musim panen'}`
+      : '';
     return `📦 **${matchedProduct.name}** (${matchedProduct.scientificName})\n\n` +
       `- **Price:** $${matchedProduct.price}/kg\n` +
       `- **Supplier:** ${matchedProduct.supplier.name} (⭐ ${matchedProduct.supplier.rating})\n` +
+      `- **Review Rating:** ⭐ ${avgRating} (${matchedProduct.reviews.length} reviews)\n` +
       `- **Stock:** ${matchedProduct.supplier.stock.toLocaleString()} kg available\n` +
       `- **Location:** ${matchedProduct.location}\n` +
       `- **Min Order:** ${matchedProduct.minOrder.quantity} ${matchedProduct.minOrder.unit}\n` +
-      `- **Certificate:** ${matchedProduct.specifications.certificate}\n\n` +
-      `💡 This product has ${matchedProduct.supplier.totalSales.toLocaleString()} total sales. ${matchedProduct.onSale ? "🔥 Currently on sale!" : ""}`;
+      `- **Certificate:** ${matchedProduct.specifications.certificate}${seasonText}\n\n` +
+      `💡 ${matchedProduct.supplier.totalSales.toLocaleString()} total sales. ${matchedProduct.onSale ? "🔥 Currently on sale!" : ""}`;
+  }
+
+  // Review/testimoni handler
+  if (lower.includes("review") || lower.includes("testimoni") || lower.includes("ulasan") || lower.includes("feedback")) {
+    const sorted = [...products].sort((a, b) => {
+      const avgA = a.reviews.reduce((s, r) => s + r.rating, 0) / (a.reviews.length || 1);
+      const avgB = b.reviews.reduce((s, r) => s + r.rating, 0) / (b.reviews.length || 1);
+      return avgB - avgA;
+    });
+    return `⭐ **Top Reviewed Suppliers:**\n\n` +
+      sorted.map((p, i) => {
+        const avg = (p.reviews.reduce((s, r) => s + r.rating, 0) / p.reviews.length).toFixed(1);
+        const bestReview = p.reviews.sort((a, b) => b.rating - a.rating)[0];
+        return `${i + 1}. **${p.supplier.name}** — ⭐ ${avg} avg (${p.reviews.length} reviews)\n   📦 ${p.name} — $${p.price}/kg\n   💬 "${bestReview.comment}" — ${bestReview.user}`;
+      }).join("\n\n") +
+      `\n\n💡 Rekomendasi berdasarkan rating dan testimoni pembeli sebelumnya.`;
+  }
+
+  // Season handler
+  if (lower.includes("musim") || lower.includes("season") || lower.includes("seasonal") || lower.includes("panen") || lower.includes("harvest")) {
+    const currentSeason = getCurrentSeason();
+    const inSeasonIds = getSeasonalProductIds();
+    const inSeasonProducts = products.filter(p => inSeasonIds.includes(p.id));
+    const upcoming = getUpcomingHarvestProducts();
+    const upcomingProducts = upcoming.map(u => {
+      const prod = products.find(p => p.id === u.productId);
+      return prod ? `- **${prod.name}** — mulai panen ${u.nextMonth}` : '';
+    }).filter(Boolean);
+
+    return `🌿 **Info Musim Saat Ini**\n\n` +
+      `📅 **${currentSeason.nameId}** (${currentSeason.name})\n${currentSeason.description}\n\n` +
+      `**Produk Sedang Musim Panen:**\n` +
+      (inSeasonProducts.length > 0
+        ? inSeasonProducts.map(p => {
+            const si = getProductSeasonInfo(p.id);
+            return `- 🌿 **${p.name}** — $${p.price}/kg (${p.supplier.name})\n  ${si?.notes || ''}`;
+          }).join("\n")
+        : "Tidak ada produk yang sedang musim panen saat ini.") +
+      (upcomingProducts.length > 0
+        ? `\n\n**Akan Segera Panen:**\n${upcomingProducts.join("\n")}`
+        : '') +
+      `\n\n💡 Beli saat musim panen untuk harga terbaik dan kualitas optimal!`;
   }
 
   if (lower.includes("recommend") || lower.includes("rekomendasi") || lower.includes("stock")) {
     const sorted = [...products].sort((a, b) => b.supplier.rating - a.supplier.rating);
     const top3 = sorted.slice(0, 3);
     return `🌿 **Top 3 Recommended Herbal Products:**\n\n` +
-      top3.map((p, i) =>
-        `${i + 1}. **${p.name}** - $${p.price}/kg\n   Supplier: ${p.supplier.name} (⭐ ${p.supplier.rating})\n   Stock: ${p.supplier.stock.toLocaleString()} kg`
-      ).join("\n\n") +
-      `\n\n💡 Rankings are based on supplier rating, stock availability, and sales volume.`;
+      top3.map((p, i) => {
+        const avg = (p.reviews.reduce((s, r) => s + r.rating, 0) / p.reviews.length).toFixed(1);
+        return `${i + 1}. **${p.name}** - $${p.price}/kg\n   Supplier: ${p.supplier.name} (⭐ ${p.supplier.rating})\n   Reviews: ⭐ ${avg} (${p.reviews.length} reviews)\n   Stock: ${p.supplier.stock.toLocaleString()} kg`;
+      }).join("\n\n") +
+      `\n\n💡 Rankings based on supplier rating, reviews, and stock availability.`;
   }
 
   if (lower.includes("price") || lower.includes("harga") || lower.includes("comparison")) {
@@ -57,9 +109,10 @@ function generateBuyerResponse(input: string): string {
   if (lower.includes("supplier")) {
     const sorted = [...products].sort((a, b) => b.supplier.rating - a.supplier.rating);
     return `🏆 **Supplier Rankings:**\n\n` +
-      sorted.map((p, i) =>
-        `${i + 1}. **${p.supplier.name}** — ⭐ ${p.supplier.rating}\n   📍 ${p.supplier.location} | 📦 ${p.supplier.totalSales.toLocaleString()} sales | ${p.supplier.verified ? "✅ Verified" : "⚠️ Unverified"}`
-      ).join("\n\n");
+      sorted.map((p, i) => {
+        const avg = (p.reviews.reduce((s, r) => s + r.rating, 0) / p.reviews.length).toFixed(1);
+        return `${i + 1}. **${p.supplier.name}** — ⭐ ${p.supplier.rating} (Review: ${avg})\n   📍 ${p.supplier.location} | 📦 ${p.supplier.totalSales.toLocaleString()} sales | ${p.supplier.verified ? "✅ Verified" : "⚠️ Unverified"}`;
+      }).join("\n\n");
   }
 
   if (lower.includes("category") || lower.includes("kategori")) {
@@ -72,6 +125,8 @@ function generateBuyerResponse(input: string): string {
     `- **Product recommendations** — type "recommend"\n` +
     `- **Price comparison** — type "price"\n` +
     `- **Supplier rankings** — type "supplier"\n` +
+    `- **Top reviewed** — type "review"\n` +
+    `- **Seasonal info** — type "musim"\n` +
     `- **Categories** — type "category"\n` +
     `- **Product details** — type a product name (e.g., "Turmeric")\n\n` +
     `Try one of the quick actions on the left! 👈`;
@@ -80,7 +135,9 @@ function generateBuyerResponse(input: string): string {
 const quickActions = [
   { label: "Best Suppliers", icon: Users, query: "Best suppliers?" },
   { label: "Price Comparison", icon: DollarSign, query: "Price comparison" },
-  { label: "Stock Recommendations", icon: ShoppingBag, query: "Stock recommendations" },
+  { label: "Top Reviewed", icon: Star, query: "Top reviewed suppliers" },
+  { label: "Current Season", icon: Calendar, query: "Musim saat ini" },
+  { label: "Recommendations", icon: ShoppingBag, query: "Stock recommendations" },
   { label: "Browse Categories", icon: Leaf, query: "Show categories" },
 ];
 
@@ -89,7 +146,7 @@ const BuyerAIAssistant = () => {
     {
       id: "welcome",
       sender: "ai",
-      text: "👋 Welcome to the AI Purchasing Assistant! I can help you find the best herbal products, compare prices, and recommend suppliers. What would you like to know?",
+      text: "👋 Welcome to the AI Purchasing Assistant! I can help you find the best herbal products, compare prices, check reviews, and see seasonal availability. What would you like to know?",
       timestamp: new Date(),
     },
   ]);
@@ -145,6 +202,7 @@ const BuyerAIAssistant = () => {
   const avgPrice = (products.reduce((s, p) => s + p.price, 0) / products.length).toFixed(2);
   const totalProducts = products.length;
   const totalSuppliers = new Set(products.map(p => p.supplier.name)).size;
+  const currentSeason = getCurrentSeason();
 
   return (
     <div className="min-h-screen gradient-bg relative">
@@ -152,7 +210,6 @@ const BuyerAIAssistant = () => {
       <Web3Header />
       <PageTransition>
         <div className="container mx-auto px-4 py-24 relative z-10">
-          {/* Header */}
           <div className="flex items-center gap-4 mb-6">
             <Link to="/buyer/dashboard">
               <Button variant="ghost" size="icon" className="rounded-full">
@@ -171,19 +228,12 @@ const BuyerAIAssistant = () => {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6" style={{ minHeight: "65vh" }}>
-            {/* Sidebar */}
             <div className="lg:col-span-1 space-y-4">
-              {/* Quick Actions */}
               <Card className="glass-card border-border/50">
                 <CardContent className="pt-5 space-y-2">
                   <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider mb-3">Quick Actions</h3>
                   {quickActions.map((action) => (
-                    <Button
-                      key={action.label}
-                      variant="ghost"
-                      className="w-full justify-start gap-2 text-left"
-                      onClick={() => handleSend(action.query)}
-                    >
+                    <Button key={action.label} variant="ghost" className="w-full justify-start gap-2 text-left" onClick={() => handleSend(action.query)}>
                       <action.icon className="h-4 w-4 text-primary" />
                       {action.label}
                     </Button>
@@ -191,7 +241,6 @@ const BuyerAIAssistant = () => {
                 </CardContent>
               </Card>
 
-              {/* Market Summary */}
               <Card className="glass-card border-border/50">
                 <CardContent className="pt-5 space-y-3">
                   <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider">Market Summary</h3>
@@ -199,23 +248,17 @@ const BuyerAIAssistant = () => {
                     <div className="flex justify-between"><span className="text-muted-foreground">Avg Price</span><span className="font-medium">${avgPrice}/kg</span></div>
                     <div className="flex justify-between"><span className="text-muted-foreground">Products</span><span className="font-medium">{totalProducts}</span></div>
                     <div className="flex justify-between"><span className="text-muted-foreground">Suppliers</span><span className="font-medium">{totalSuppliers}</span></div>
+                    <div className="flex justify-between"><span className="text-muted-foreground">Season</span><span className="font-medium text-primary">{currentSeason.nameId}</span></div>
                   </div>
                 </CardContent>
               </Card>
 
-              {/* Product Categories */}
               <Card className="glass-card border-border/50">
                 <CardContent className="pt-5">
                   <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider mb-3">Categories</h3>
                   <div className="flex flex-wrap gap-2">
                     {categories.map((cat) => (
-                      <Button
-                        key={cat}
-                        variant="outline"
-                        size="sm"
-                        className="text-xs"
-                        onClick={() => handleSend(cat)}
-                      >
+                      <Button key={cat} variant="outline" size="sm" className="text-xs" onClick={() => handleSend(cat)}>
                         {cat}
                       </Button>
                     ))}
@@ -224,23 +267,12 @@ const BuyerAIAssistant = () => {
               </Card>
             </div>
 
-            {/* Chat Area */}
             <Card className="lg:col-span-3 glass-card border-border/50 flex flex-col">
               <CardContent className="flex-1 flex flex-col p-0 overflow-hidden">
-                {/* Messages */}
                 <div ref={scrollRef} className="flex-1 overflow-y-auto p-6 space-y-4">
                   {messages.map((msg) => (
-                    <motion.div
-                      key={msg.id}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className={`flex ${msg.sender === "user" ? "justify-end" : "justify-start"}`}
-                    >
-                      <div className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${
-                        msg.sender === "user"
-                          ? "bg-primary text-primary-foreground"
-                          : "bg-muted/60 border border-border/50"
-                      }`}>
+                    <motion.div key={msg.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className={`flex ${msg.sender === "user" ? "justify-end" : "justify-start"}`}>
+                      <div className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${msg.sender === "user" ? "bg-primary text-primary-foreground" : "bg-muted/60 border border-border/50"}`}>
                         {msg.sender === "ai" && (
                           <div className="flex items-center gap-2 mb-2">
                             <Sparkles className="h-3.5 w-3.5 text-primary" />
@@ -268,15 +300,9 @@ const BuyerAIAssistant = () => {
                   )}
                 </div>
 
-                {/* Input */}
                 <div className="border-t border-border/50 p-4">
                   <form onSubmit={(e) => { e.preventDefault(); handleSend(); }} className="flex gap-2">
-                    <Input
-                      value={input}
-                      onChange={(e) => setInput(e.target.value)}
-                      placeholder="Ask about products, prices, or suppliers..."
-                      className="flex-1 bg-background/50"
-                    />
+                    <Input value={input} onChange={(e) => setInput(e.target.value)} placeholder="Ask about products, reviews, seasons, or suppliers..." className="flex-1 bg-background/50" />
                     <Button type="submit" size="icon" disabled={!input.trim()}>
                       <Send className="h-4 w-4" />
                     </Button>

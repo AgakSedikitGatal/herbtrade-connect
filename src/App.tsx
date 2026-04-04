@@ -8,6 +8,7 @@ import { AnimatePresence } from "framer-motion";
 import { CartProvider } from "@/contexts/CartContext";
 import { OrderProvider } from "@/contexts/OrderContext";
 import { CommunityProvider } from "@/contexts/CommunityContext";
+import { BuyerRequestProvider } from "@/contexts/BuyerRequestContext";
 import { InitialLoader } from "@/components/InitialLoader";
 import { PageTransition } from "@/components/PageTransition";
 import { ScrollToTop } from "@/components/ScrollToTop";
@@ -35,6 +36,7 @@ import SellerWithdraw from "./pages/seller/Withdraw";
 import BuyerAIAssistant from "./pages/buyer/AIAssistant";
 import SellerAIAssistant from "./pages/seller/AIAssistant";
 import TransactionDetail from "./pages/TransactionDetail";
+import ProductRequest from "./pages/buyer/ProductRequest";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -62,6 +64,7 @@ const AnimatedRoutes = () => {
         <Route path="/buyer/requests" element={<PageTransition><BuyerRequests /></PageTransition>} />
         <Route path="/buyer/orders" element={<PageTransition><BuyerOrders /></PageTransition>} />
         <Route path="/buyer/ai-assistant" element={<PageTransition><BuyerAIAssistant /></PageTransition>} />
+        <Route path="/buyer/product-request" element={<PageTransition><ProductRequest /></PageTransition>} />
         <Route path="/seller/dashboard" element={<SellerDashboard />} />
         <Route path="/seller/products" element={<PageTransition><SellerProducts /></PageTransition>} />
         <Route path="/seller/add-product" element={<PageTransition><AddProduct /></PageTransition>} />
@@ -96,7 +99,8 @@ const App = () => {
     <QueryClientProvider client={queryClient}>
       <OrderProvider>
         <CartProvider>
-          <CommunityProvider>
+          <BuyerRequestProvider>
+            <CommunityProvider>
             <TooltipProvider>
               <Toaster />
               <Sonner />
@@ -107,6 +111,7 @@ const App = () => {
               </BrowserRouter>
             </TooltipProvider>
           </CommunityProvider>
+          </BuyerRequestProvider>
         </CartProvider>
       </OrderProvider>
     </QueryClientProvider>

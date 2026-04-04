@@ -8,7 +8,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { BlockchainStats } from "@/components/BlockchainStats";
 import { DashboardSkeleton } from "@/components/DashboardSkeleton";
 import { PageTransition } from "@/components/PageTransition";
-import { Package, ShoppingBag, Truck, Plus, Bot } from "lucide-react";
+import { Package, ShoppingBag, Truck, Plus, Bot, FileText } from "lucide-react";
 import { authService } from "@/lib/auth";
 
 const BuyerDashboard = () => {

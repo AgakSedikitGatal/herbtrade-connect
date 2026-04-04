@@ -214,7 +214,12 @@ export const products: Product[] = [
       totalSales: 650,
       stock: 2100,
       verified: false
-    }
+    },
+    reviews: [
+      { user: "Wawan B.", rating: 4, comment: "Nutmeg berkualitas, myristicin content tinggi.", date: "2025-12-05" },
+      { user: "Ika P.", rating: 3, comment: "Produk bagus tapi supplier belum verified, agak ragu awalnya.", date: "2025-11-01" },
+      { user: "Teguh S.", rating: 5, comment: "Ternyata kualitasnya sangat baik meski belum verified. Recommended!", date: "2025-10-12" }
+    ]
   }
 ];
 

@@ -1,53 +1,78 @@
 
 
-## Buat Halaman AI Assistant untuk Dashboard Buyer & Seller
+## Tiga Fitur Baru: Buyer Request Form, AI Review-Based Recommendations, dan Seasonal System
 
-### Ringkasan
-Membuat halaman full-page dedicated untuk AI Chat Assistant yang dapat diakses dari Quick Actions di dashboard buyer dan seller. Halaman ini akan memiliki layout yang lebih luas dibanding floating chat widget, dengan sidebar untuk quick actions dan area chat yang lebih besar.
+### 1. Fitur Permintaan Buyer (Buyer Product Request)
 
-### File yang akan dibuat/diubah
+Membuat halaman baru di mana buyer bisa mengajukan permintaan produk herbal yang mereka butuhkan ke supplier.
 
-**1. Buat `src/pages/buyer/AIAssistant.tsx` (baru)**
-- Full-page AI chat untuk buyer dengan layout: header, sidebar quick actions, dan area chat utama
-- Reuse logic dari `AIChatAssistant.tsx` (generateBuyerResponse)
-- Sidebar berisi: quick action buttons, product categories, dan tips
-- Chat area lebih besar dengan scroll, input, dan message rendering
-- Wrapped dengan Web3Header, Web3Footer, Web3Background
+**Buat `src/pages/buyer/ProductRequest.tsx`**
+- Form berisi: nama produk, jumlah yang dibutuhkan, unit, budget range, deskripsi kebutuhan, preferred location/category
+- Data disimpan ke localStorage via context baru
+- Daftar permintaan yang sudah diajukan ditampilkan di bawah form dengan status (open/matched/closed)
 
-**2. Buat `src/pages/seller/AIAssistant.tsx` (baru)**
-- Sama seperti buyer tapi dengan generateSellerResponse
-- Sidebar quick actions: Pricing strategy, Stock optimization, Market trends
-- Tambahan section di sidebar: market summary stats (avg price, total products, dll)
+**Buat `src/contexts/BuyerRequestContext.tsx`**
+- Interface: `BuyerRequest { id, productName, quantity, unit, budgetMin, budgetMax, description, category, status, createdAt, matchedSuppliers[] }`
+- CRUD operations dengan localStorage persistence
 
-**3. Ubah `src/pages/buyer/Dashboard.tsx`**
-- Tambah card "AI Assistant" di Quick Actions grid (link ke `/buyer/ai-assistant`)
-- Ganti icon dengan Bot/Sparkles
+**Update routing & dashboard:**
+- Tambah route `/buyer/product-request` di `App.tsx`
+- Tambah card "Product Request" di Quick Actions buyer dashboard
 
-**4. Ubah `src/pages/seller/Dashboard.tsx`**
-- Tambah card "AI Assistant" di Quick Actions grid (link ke `/seller/ai-assistant`)
+### 2. AI Recommendations Berdasarkan Review/Testimoni
 
-**5. Ubah `src/App.tsx`**
-- Import dan tambah route `/buyer/ai-assistant` dan `/seller/ai-assistant`
+**Update `src/lib/products.ts`**
+- Tambah field `reviews` ke Product interface:
+  ```
+  reviews: { user: string, rating: number, comment: string, date: string }[]
+  ```
+- Tambah mock review data ke setiap produk (3-5 review per produk)
 
-### Layout halaman AI
+**Update `src/pages/buyer/AIAssistant.tsx`**
+- Tambah handler untuk keyword "review"/"testimoni"/"ulasan"
+- AI akan merekomendasikan supplier berdasarkan rata-rata review rating, jumlah review positif, dan kutipan review terbaik
+- Quick action baru: "Top Reviewed Suppliers"
 
-```text
-┌─────────────────────────────────────────┐
-│  Web3Header                             │
-├────────────┬────────────────────────────┤
-│  Sidebar   │  Chat Area                 │
-│            │                            │
-│ Quick      │  Messages (scrollable)     │
-│ Actions    │                            │
-│            │                            │
-│ Categories │                            │
-│            │                            │
-│ Tips       │  ────────────────────────  │
-│            │  [Input] [Send]            │
-├────────────┴────────────────────────────┤
-│  Web3Footer                             │
-└─────────────────────────────────────────┘
-```
+**Update `src/pages/seller/AIAssistant.tsx`**
+- Tambah handler untuk keyword "review"/"feedback"
+- AI memberikan insight tentang review produk seller dan saran improvement
 
-Floating chat widget (`AIChatAssistant`) tetap ada di dashboard sebagai shortcut.
+### 3. Fitur Musim (Seasonal System)
+
+**Buat `src/lib/seasons.ts`**
+- Definisi musim Indonesia: Musim Hujan (Oct-Mar), Musim Kemarau (Apr-Sep)
+- Data seasonal per produk: kapan musim tanam, musim panen, ketersediaan optimal
+- Fungsi `getCurrentSeason()` berdasarkan bulan sekarang (Date)
+- Fungsi `getSeasonalProducts()` yang return produk yang sedang musim panen/tersedia
+- Data contoh:
+  - Turmeric: panen Musim Kemarau (Jun-Sep)
+  - Cinnamon: panen sepanjang tahun
+  - Black Pepper: panen Musim Hujan (Dec-Feb)
+  - dll.
+
+**Update `src/pages/buyer/AIAssistant.tsx` & `src/pages/seller/AIAssistant.tsx`**
+- Tambah handler keyword "musim"/"season"/"seasonal"
+- AI menampilkan produk yang sedang musim saat ini, produk yang akan segera musim, dan saran stok berdasarkan musim
+- Quick action baru: "Current Season" / "Musim Saat Ini"
+
+**Update `src/pages/Shop.tsx`**
+- Tambah banner/section "Currently In Season 🌿" di atas product grid
+- Tampilkan badge "In Season" pada product card yang sedang musim
+
+**Update `src/pages/Index.tsx` (homepage)**
+- Tambah section seasonal highlight di landing page
+
+### File yang dibuat/diubah
+
+| File | Aksi |
+|------|------|
+| `src/lib/seasons.ts` | Baru — seasonal data & helpers |
+| `src/contexts/BuyerRequestContext.tsx` | Baru — buyer request state management |
+| `src/pages/buyer/ProductRequest.tsx` | Baru — form & list permintaan buyer |
+| `src/lib/products.ts` | Ubah — tambah reviews field |
+| `src/pages/buyer/AIAssistant.tsx` | Ubah — tambah review & season handlers |
+| `src/pages/seller/AIAssistant.tsx` | Ubah — tambah review & season handlers |
+| `src/pages/Shop.tsx` | Ubah — seasonal banner & badge |
+| `src/pages/buyer/Dashboard.tsx` | Ubah — tambah Product Request card |
+| `src/App.tsx` | Ubah — tambah route & context provider |
 

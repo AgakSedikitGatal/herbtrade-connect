@@ -8,6 +8,7 @@ import { AnimatePresence } from "framer-motion";
 import { CartProvider } from "@/contexts/CartContext";
 import { OrderProvider } from "@/contexts/OrderContext";
 import { CommunityProvider } from "@/contexts/CommunityContext";
+import { BuyerRequestProvider } from "@/contexts/BuyerRequestContext";
 import { InitialLoader } from "@/components/InitialLoader";
 import { PageTransition } from "@/components/PageTransition";
 import { ScrollToTop } from "@/components/ScrollToTop";

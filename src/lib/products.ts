@@ -1,3 +1,10 @@
+export interface ProductReview {
+  user: string;
+  rating: number;
+  comment: string;
+  date: string;
+}
+
 export interface Product {
   id: string;
   name: string;
@@ -32,6 +39,7 @@ export interface Product {
     stock: number;
     verified: boolean;
   };
+  reviews: ProductReview[];
 }
 
 export const products: Product[] = [

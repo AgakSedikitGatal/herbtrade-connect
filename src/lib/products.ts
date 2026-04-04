@@ -76,7 +76,13 @@ export const products: Product[] = [
       totalSales: 1250,
       stock: 5000,
       verified: true
-    }
+    },
+    reviews: [
+      { user: "Rina S.", rating: 5, comment: "Kualitas curcumin sangat tinggi, warna kuning pekat. Pengiriman cepat!", date: "2025-12-15" },
+      { user: "Ahmad K.", rating: 4, comment: "Produk bagus, tapi packaging bisa lebih rapi.", date: "2025-11-20" },
+      { user: "Maria L.", rating: 5, comment: "Sudah order 3x, konsisten kualitasnya. Supplier sangat responsif.", date: "2025-10-05" },
+      { user: "Budi W.", rating: 4, comment: "Harga kompetitif, kualitas sesuai sertifikat.", date: "2025-09-18" }
+    ]
   },
   {
     id: 'AP001',

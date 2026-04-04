@@ -99,7 +99,8 @@ const App = () => {
     <QueryClientProvider client={queryClient}>
       <OrderProvider>
         <CartProvider>
-          <CommunityProvider>
+          <BuyerRequestProvider>
+            <CommunityProvider>
             <TooltipProvider>
               <Toaster />
               <Sonner />

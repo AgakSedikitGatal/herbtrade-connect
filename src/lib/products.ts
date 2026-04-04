@@ -151,10 +151,14 @@ export const products: Product[] = [
       totalSales: 1100,
       stock: 4500,
       verified: true
-    }
+    },
+    reviews: [
+      { user: "Lisa M.", rating: 5, comment: "Cinnamon terbaik! Aroma kuat dan rasa manis alami.", date: "2025-12-01" },
+      { user: "Rudi H.", rating: 5, comment: "Sertifikat organic dan halal lengkap. Sangat profesional.", date: "2025-11-15" },
+      { user: "Anita R.", rating: 4, comment: "Kualitas premium, harga sebanding.", date: "2025-10-08" },
+      { user: "Dani S.", rating: 5, comment: "Sudah ekspor ke 3 negara pakai supplier ini. Top!", date: "2025-09-20" }
+    ]
   },
-  {
-    id: 'PN001',
     name: 'Black Pepper',
     scientificName: 'Piper nigrum',
     price: 18.75,

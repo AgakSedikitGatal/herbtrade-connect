@@ -115,10 +115,13 @@ export const products: Product[] = [
       totalSales: 890,
       stock: 3200,
       verified: true
-    }
+    },
+    reviews: [
+      { user: "Dewi A.", rating: 5, comment: "Andrographolide content tinggi, cocok untuk suplemen imun.", date: "2025-11-10" },
+      { user: "Joko P.", rating: 4, comment: "Kualitas baik, pengiriman tepat waktu.", date: "2025-10-22" },
+      { user: "Siti N.", rating: 5, comment: "Supplier terpercaya, sudah langganan 1 tahun.", date: "2025-09-15" }
+    ]
   },
-  {
-    id: 'CV001',
     name: 'Ceylon Cinnamon',
     scientificName: 'Cinnamomum verum',
     price: 15.99,

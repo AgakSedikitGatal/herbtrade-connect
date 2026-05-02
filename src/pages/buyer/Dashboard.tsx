@@ -8,7 +8,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { BlockchainStats } from "@/components/BlockchainStats";
 import { DashboardSkeleton } from "@/components/DashboardSkeleton";
 import { PageTransition } from "@/components/PageTransition";
-import { Package, ShoppingBag, Truck, Plus, Bot, FileText } from "lucide-react";
+import { Package, ShoppingBag, Truck, Plus, Bot, FileText, SearchCheck } from "lucide-react";
 import { authService } from "@/lib/auth";
 
 const BuyerDashboard = () => {
@@ -57,6 +57,7 @@ const BuyerDashboard = () => {
                 { to: "/tracking", icon: Truck, title: "Track Shipment", desc: "Monitor deliveries", color: "info", glow: "" },
                 { to: "/buyer/ai-assistant", icon: Bot, title: "AI Assistant", desc: "Get recommendations", color: "primary", glow: "glow-primary" },
                 { to: "/buyer/product-request", icon: FileText, title: "Product Request", desc: "Request products", color: "secondary", glow: "glow-secondary" },
+                { to: "/buyer/compliance-history", icon: SearchCheck, title: "Verification History", desc: "Review QR compliance scans", color: "info", glow: "" },
               ].map((item, index) => (
                 <motion.div
                   key={item.to}

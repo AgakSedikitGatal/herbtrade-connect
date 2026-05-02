@@ -108,6 +108,20 @@ export const Web3Header = () => {
                         Dashboard
                       </Link>
                     </DropdownMenuItem>
+                    {user.role === "seller" ? (
+                      <>
+                        <DropdownMenuItem asChild>
+                          <Link to="/seller/compliance-onboarding">Compliance Onboarding</Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Link to="/seller/qr-compliance">QR Compliance</Link>
+                        </DropdownMenuItem>
+                      </>
+                    ) : (
+                      <DropdownMenuItem asChild>
+                        <Link to="/buyer/compliance-history">Verification History</Link>
+                      </DropdownMenuItem>
+                    )}
                     <DropdownMenuItem onClick={handleLogout} className="text-destructive">
                       <LogOut className="h-4 w-4 mr-2" />
                       Logout
@@ -163,6 +177,32 @@ export const Web3Header = () => {
                         >
                           Dashboard
                         </Link>
+                        {user.role === "seller" ? (
+                          <>
+                            <Link
+                              to="/seller/compliance-onboarding"
+                              onClick={() => setIsOpen(false)}
+                              className="block text-lg hover:text-primary transition-colors mb-4"
+                            >
+                              Compliance Onboarding
+                            </Link>
+                            <Link
+                              to="/seller/qr-compliance"
+                              onClick={() => setIsOpen(false)}
+                              className="block text-lg hover:text-primary transition-colors mb-4"
+                            >
+                              QR Compliance
+                            </Link>
+                          </>
+                        ) : (
+                          <Link
+                            to="/buyer/compliance-history"
+                            onClick={() => setIsOpen(false)}
+                            className="block text-lg hover:text-primary transition-colors mb-4"
+                          >
+                            Verification History
+                          </Link>
+                        )}
                         <Button onClick={handleLogout} variant="destructive" className="w-full mb-4">
                           <LogOut className="h-4 w-4 mr-2" />
                           Logout

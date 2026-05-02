@@ -9,6 +9,7 @@ import { CartProvider } from "@/contexts/CartContext";
 import { OrderProvider } from "@/contexts/OrderContext";
 import { CommunityProvider } from "@/contexts/CommunityContext";
 import { BuyerRequestProvider } from "@/contexts/BuyerRequestContext";
+import { ComplianceProvider } from "@/contexts/ComplianceContext";
 import { InitialLoader } from "@/components/InitialLoader";
 import { PageTransition } from "@/components/PageTransition";
 import { ScrollToTop } from "@/components/ScrollToTop";
@@ -35,6 +36,10 @@ import SellerAnalytics from "./pages/seller/Analytics";
 import SellerWithdraw from "./pages/seller/Withdraw";
 import BuyerAIAssistant from "./pages/buyer/AIAssistant";
 import SellerAIAssistant from "./pages/seller/AIAssistant";
+import ComplianceOnboarding from "./pages/seller/ComplianceOnboarding";
+import QRCompliance from "./pages/seller/QRCompliance";
+import ComplianceHistory from "./pages/buyer/ComplianceHistory";
+import ProductJourney from "./pages/ProductJourney";
 import TransactionDetail from "./pages/TransactionDetail";
 import ProductRequest from "./pages/buyer/ProductRequest";
 import NotFound from "./pages/NotFound";
@@ -65,6 +70,7 @@ const AnimatedRoutes = () => {
         <Route path="/buyer/orders" element={<PageTransition><BuyerOrders /></PageTransition>} />
         <Route path="/buyer/ai-assistant" element={<PageTransition><BuyerAIAssistant /></PageTransition>} />
         <Route path="/buyer/product-request" element={<PageTransition><ProductRequest /></PageTransition>} />
+        <Route path="/buyer/compliance-history" element={<PageTransition><ComplianceHistory /></PageTransition>} />
         <Route path="/seller/dashboard" element={<SellerDashboard />} />
         <Route path="/seller/products" element={<PageTransition><SellerProducts /></PageTransition>} />
         <Route path="/seller/add-product" element={<PageTransition><AddProduct /></PageTransition>} />
@@ -72,6 +78,9 @@ const AnimatedRoutes = () => {
         <Route path="/seller/analytics" element={<PageTransition><SellerAnalytics /></PageTransition>} />
         <Route path="/seller/withdraw" element={<PageTransition><SellerWithdraw /></PageTransition>} />
         <Route path="/seller/ai-assistant" element={<PageTransition><SellerAIAssistant /></PageTransition>} />
+        <Route path="/seller/compliance-onboarding" element={<PageTransition><ComplianceOnboarding /></PageTransition>} />
+        <Route path="/seller/qr-compliance" element={<PageTransition><QRCompliance /></PageTransition>} />
+        <Route path="/journey/:batchCode" element={<PageTransition><ProductJourney /></PageTransition>} />
         <Route path="/transaction/:txHash" element={<PageTransition><TransactionDetail /></PageTransition>} />
         <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
       </Routes>
@@ -100,8 +109,9 @@ const App = () => {
       <OrderProvider>
         <CartProvider>
           <BuyerRequestProvider>
-            <CommunityProvider>
-            <TooltipProvider>
+            <ComplianceProvider>
+              <CommunityProvider>
+              <TooltipProvider>
               <Toaster />
               <Sonner />
               {showLoader && <InitialLoader onComplete={handleLoaderComplete} />}
@@ -109,8 +119,9 @@ const App = () => {
                 <ScrollToTop />
                 <AnimatedRoutes />
               </BrowserRouter>
-            </TooltipProvider>
-          </CommunityProvider>
+              </TooltipProvider>
+            </CommunityProvider>
+            </ComplianceProvider>
           </BuyerRequestProvider>
         </CartProvider>
       </OrderProvider>

@@ -8,7 +8,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { BlockchainStats } from "@/components/BlockchainStats";
 import { DashboardSkeleton } from "@/components/DashboardSkeleton";
 import { PageTransition } from "@/components/PageTransition";
-import { Package, Plus, BarChart3, DollarSign, ShoppingCart, TrendingUp, Wallet, Building2, CreditCard, Smartphone, Bot } from "lucide-react";
+import { Package, Plus, BarChart3, DollarSign, ShoppingCart, TrendingUp, Wallet, Building2, CreditCard, Smartphone, Bot, QrCode, ShieldCheck } from "lucide-react";
 import { authService } from "@/lib/auth";
 
 const SellerDashboard = () => {
@@ -96,6 +96,8 @@ const SellerDashboard = () => {
                   { to: "/seller/products", icon: Package, title: "My Products", desc: "Manage your listings", color: "secondary", glow: "glow-secondary" },
                   { to: "/seller/orders", icon: ShoppingCart, title: "Orders", desc: "View & fulfill orders", color: "accent", glow: "" },
                   { to: "/seller/analytics", icon: BarChart3, title: "Analytics", desc: "View performance", color: "info", glow: "" },
+                  { to: "/seller/compliance-onboarding", icon: ShieldCheck, title: "Compliance Onboarding", desc: "Automate admin & export docs", color: "primary", glow: "glow-primary" },
+                  { to: "/seller/qr-compliance", icon: QrCode, title: "QR Compliance", desc: "Manage traceability QR", color: "secondary", glow: "glow-secondary" },
                   { to: "/seller/ai-assistant", icon: Bot, title: "AI Assistant", desc: "Get business insights", color: "primary", glow: "glow-primary" },
                 ].map((item, index) => (
                   <motion.div

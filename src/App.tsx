@@ -11,6 +11,7 @@ import { CommunityProvider } from "@/contexts/CommunityContext";
 import { BuyerRequestProvider } from "@/contexts/BuyerRequestContext";
 import { ComplianceProvider } from "@/contexts/ComplianceContext";
 import { InitialLoader } from "@/components/InitialLoader";
+import { ThemeProvider } from "@/components/ThemeProvider";
 import { PageTransition } from "@/components/PageTransition";
 import { ScrollToTop } from "@/components/ScrollToTop";
 import Index from "./pages/Index";
@@ -122,7 +123,8 @@ const App = () => {
   };
 
   return (
-    <QueryClientProvider client={queryClient}>
+    <ThemeProvider>
+      <QueryClientProvider client={queryClient}>
       <OrderProvider>
         <CartProvider>
           <BuyerRequestProvider>
@@ -142,7 +144,8 @@ const App = () => {
           </BuyerRequestProvider>
         </CartProvider>
       </OrderProvider>
-    </QueryClientProvider>
+      </QueryClientProvider>
+    </ThemeProvider>
   );
 };
 

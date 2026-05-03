@@ -11,6 +11,20 @@
     <meta property="og:title" content="HerBlocX - Global Herbal Trading Platform" />
     <meta property="og:description" content="Connect with verified global herbal suppliers and buyers. Trade with blockchain transparency and certified quality." />
     <meta property="og:type" content="website" />
+    <script>
+      (function () {
+        try {
+          var storedTheme = localStorage.getItem("herblocx-theme");
+          var theme = storedTheme === "light" ? "light" : "dark";
+          document.documentElement.classList.remove("light", "dark");
+          document.documentElement.classList.add(theme);
+          document.documentElement.style.colorScheme = theme;
+        } catch (error) {
+          document.documentElement.classList.add("dark");
+          document.documentElement.style.colorScheme = "dark";
+        }
+      })();
+    </script>
   </head>
 
   <body>

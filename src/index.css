@@ -71,6 +71,56 @@
     --sidebar-ring: 142 70% 45%;
   }
 
+  .light {
+    --background: 45 55% 97%;
+    --foreground: 164 35% 12%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 164 35% 12%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 164 35% 12%;
+
+    --primary: 142 64% 38%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 160 48% 35%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 142 24% 92%;
+    --muted-foreground: 164 16% 38%;
+
+    --accent: 142 70% 42%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 72% 48%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 150 18% 84%;
+    --input: 150 18% 88%;
+    --ring: 142 64% 38%;
+
+    --hero-gradient-start: 142 58% 42%;
+    --hero-gradient-end: 176 45% 38%;
+
+    --success: 142 60% 36%;
+    --warning: 36 90% 45%;
+    --info: 199 82% 42%;
+
+    --glow-primary: 142 64% 38%;
+    --glow-secondary: 176 45% 38%;
+    --glow-accent: 160 42% 45%;
+
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 164 35% 12%;
+    --sidebar-primary: 142 64% 38%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 142 24% 92%;
+    --sidebar-accent-foreground: 164 35% 12%;
+    --sidebar-border: 150 18% 84%;
+    --sidebar-ring: 142 64% 38%;
+  }
+
   .dark {
     --background: 220 20% 4%;
     --foreground: 0 0% 98%;
@@ -137,6 +187,17 @@
     );
     background-size: 400% 400%;
     animation: gradient-shift 15s ease infinite;
+  }
+
+  .light .gradient-bg {
+    background: linear-gradient(-45deg,
+      hsl(var(--background)),
+      hsl(var(--card)),
+      hsl(var(--muted) / 0.9),
+      hsl(var(--primary) / 0.12),
+      hsl(45 70% 96%)
+    );
+    background-size: 400% 400%;
   }
 
   @keyframes gradient-shift {

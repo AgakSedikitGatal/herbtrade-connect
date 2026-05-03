@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Menu, LogOut, User } from "lucide-react";
 import { authService } from "@/lib/auth";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -93,6 +94,7 @@ export const Web3Header = () => {
 
             {/* Actions */}
             <div className="hidden md:flex items-center gap-4">
+              <ThemeToggle />
               {user ? (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -175,13 +177,14 @@ export const Web3Header = () => {
                       </Link>
                     )
                   )}
-                  <div className="border-t border-border pt-4 mt-4">
+                  <div className="border-t border-border pt-4 mt-4 space-y-4">
+                    <ThemeToggle showLabel className="w-full" />
                     {user ? (
                       <>
                         <Link
                           to={dashboardPath}
                           onClick={() => setIsOpen(false)}
-                          className="block text-lg hover:text-primary transition-colors mb-4"
+                          className="block text-lg hover:text-primary transition-colors"
                         >
                           {user.role === "general" ? "Start KYC" : "Dashboard"}
                         </Link>
@@ -190,14 +193,14 @@ export const Web3Header = () => {
                             <Link
                               to="/seller/compliance-onboarding"
                               onClick={() => setIsOpen(false)}
-                              className="block text-lg hover:text-primary transition-colors mb-4"
+                              className="block text-lg hover:text-primary transition-colors"
                             >
                               Compliance Onboarding
                             </Link>
                             <Link
                               to="/seller/qr-compliance"
                               onClick={() => setIsOpen(false)}
-                              className="block text-lg hover:text-primary transition-colors mb-4"
+                              className="block text-lg hover:text-primary transition-colors"
                             >
                               QR Compliance
                             </Link>
@@ -206,7 +209,7 @@ export const Web3Header = () => {
                           <Link
                             to="/buyer/compliance-history"
                             onClick={() => setIsOpen(false)}
-                            className="block text-lg hover:text-primary transition-colors mb-4"
+                            className="block text-lg hover:text-primary transition-colors"
                           >
                             Verification History
                           </Link>
@@ -215,26 +218,26 @@ export const Web3Header = () => {
                             <Link
                               to="/kyc?role=seller"
                               onClick={() => setIsOpen(false)}
-                              className="block text-lg hover:text-primary transition-colors mb-4"
+                              className="block text-lg hover:text-primary transition-colors"
                             >
                               Upgrade as Seller
                             </Link>
                             <Link
                               to="/kyc?role=buyer"
                               onClick={() => setIsOpen(false)}
-                              className="block text-lg hover:text-primary transition-colors mb-4"
+                              className="block text-lg hover:text-primary transition-colors"
                             >
                               Upgrade as Buyer
                             </Link>
                           </>
                         )}
-                        <Button onClick={handleLogout} variant="destructive" className="w-full mb-4">
+                        <Button onClick={handleLogout} variant="destructive" className="w-full">
                           <LogOut className="h-4 w-4 mr-2" />
                           Logout
                         </Button>
                       </>
                     ) : (
-                      <Link to="/login" onClick={() => setIsOpen(false)} className="block mb-4">
+                      <Link to="/login" onClick={() => setIsOpen(false)} className="block">
                         <Button variant="outline" className="w-full">
                           Login
                         </Button>

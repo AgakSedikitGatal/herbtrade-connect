@@ -4,10 +4,10 @@ import { cn } from "@/lib/utils";
 type StatusTone = "success" | "warning" | "danger" | "info" | "neutral";
 
 const toneClasses: Record<StatusTone, string> = {
-  success: "border-emerald-500/40 bg-emerald-500/15 text-emerald-300",
-  warning: "border-amber-500/40 bg-amber-500/15 text-amber-300",
-  danger: "border-red-500/40 bg-red-500/15 text-red-300",
-  info: "border-blue-500/40 bg-blue-500/15 text-blue-300",
+  success: "border-success/40 bg-success/15 text-success",
+  warning: "border-warning/40 bg-warning/15 text-warning",
+  danger: "border-destructive/40 bg-destructive/15 text-destructive",
+  info: "border-info/40 bg-info/15 text-info",
   neutral: "border-border/60 bg-muted/40 text-muted-foreground",
 };
 

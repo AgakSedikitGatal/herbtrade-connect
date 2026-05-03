@@ -17,6 +17,7 @@ export const Web3Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const user = authService.getUser();
+  const dashboardPath = user?.role === "seller" ? "/seller/dashboard" : user?.role === "buyer" ? "/buyer/dashboard" : "/kyc";
 
   useEffect(() => {
     const handleScroll = () => {
@@ -102,10 +103,8 @@ export const Web3Header = () => {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="glass">
                     <DropdownMenuItem asChild>
-                      <Link
-                        to={user.role === "seller" ? "/seller/dashboard" : "/buyer/dashboard"}
-                      >
-                        Dashboard
+                      <Link to={dashboardPath}>
+                        {user.role === "general" ? "Start KYC" : "Dashboard"}
                       </Link>
                     </DropdownMenuItem>
                     {user.role === "seller" ? (
@@ -117,10 +116,19 @@ export const Web3Header = () => {
                           <Link to="/seller/qr-compliance">QR Compliance</Link>
                         </DropdownMenuItem>
                       </>
-                    ) : (
+                    ) : user.role === "buyer" ? (
                       <DropdownMenuItem asChild>
                         <Link to="/buyer/compliance-history">Verification History</Link>
                       </DropdownMenuItem>
+                    ) : (
+                      <>
+                        <DropdownMenuItem asChild>
+                          <Link to="/kyc?role=seller">Upgrade as Seller</Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Link to="/kyc?role=buyer">Upgrade as Buyer</Link>
+                        </DropdownMenuItem>
+                      </>
                     )}
                     <DropdownMenuItem onClick={handleLogout} className="text-destructive">
                       <LogOut className="h-4 w-4 mr-2" />
@@ -171,11 +179,11 @@ export const Web3Header = () => {
                     {user ? (
                       <>
                         <Link
-                          to={user.role === "seller" ? "/seller/dashboard" : "/buyer/dashboard"}
+                          to={dashboardPath}
                           onClick={() => setIsOpen(false)}
                           className="block text-lg hover:text-primary transition-colors mb-4"
                         >
-                          Dashboard
+                          {user.role === "general" ? "Start KYC" : "Dashboard"}
                         </Link>
                         {user.role === "seller" ? (
                           <>
@@ -194,7 +202,7 @@ export const Web3Header = () => {
                               QR Compliance
                             </Link>
                           </>
-                        ) : (
+                        ) : user.role === "buyer" ? (
                           <Link
                             to="/buyer/compliance-history"
                             onClick={() => setIsOpen(false)}
@@ -202,6 +210,23 @@ export const Web3Header = () => {
                           >
                             Verification History
                           </Link>
+                        ) : (
+                          <>
+                            <Link
+                              to="/kyc?role=seller"
+                              onClick={() => setIsOpen(false)}
+                              className="block text-lg hover:text-primary transition-colors mb-4"
+                            >
+                              Upgrade as Seller
+                            </Link>
+                            <Link
+                              to="/kyc?role=buyer"
+                              onClick={() => setIsOpen(false)}
+                              className="block text-lg hover:text-primary transition-colors mb-4"
+                            >
+                              Upgrade as Buyer
+                            </Link>
+                          </>
                         )}
                         <Button onClick={handleLogout} variant="destructive" className="w-full mb-4">
                           <LogOut className="h-4 w-4 mr-2" />

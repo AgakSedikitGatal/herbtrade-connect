@@ -18,6 +18,7 @@ import { SupplierTrendGraph } from "@/components/SupplierTrendGraph";
 import { ProductCardSkeleton, StatCardSkeleton } from "@/components/ui/loading-spinner";
 import { LivePriceTicker, LivePriceBadge } from "@/components/LivePriceTicker";
 import { useCart } from "@/contexts/CartContext";
+import { authService } from "@/lib/auth";
 
 // Mock price data for blockchain display
 const generateMockPriceChange = () => {
@@ -54,6 +55,24 @@ const Shop = () => {
       product.location.toLowerCase().includes(searchQuery.toLowerCase());
     return priceMatch && categoryMatch && stockMatch && saleMatch && searchMatch;
   });
+
+  const handleBuyerAction = (callback: () => void) => {
+    const user = authService.getUser();
+
+    if (!user) {
+      toast.error("Please login first. General accounts can browse, but trading requires Buyer KYC.");
+      navigate('/login');
+      return;
+    }
+
+    if (!authService.canTransactAsBuyer()) {
+      toast.error("Complete Buyer KYC to create purchase requests or add products to your cart.");
+      navigate('/kyc?role=buyer');
+      return;
+    }
+
+    callback();
+  };
 
   // Generate mock blockchain data for each product
   const productsWithBlockchainData = filteredProducts.map(product => ({
@@ -381,7 +400,7 @@ const Shop = () => {
                           <Package className="h-4 w-4" />
                         </Button>
                       </Link>
-                      <Button size="icon" className="btn-web3" onClick={() => {
+                      <Button size="icon" className="btn-web3" onClick={() => handleBuyerAction(() => {
                         addToCart({
                           productId: product.id,
                           productName: product.name,
@@ -394,7 +413,7 @@ const Shop = () => {
                         });
                         toast.success(`Added ${product.name} to cart!`);
                         navigate('/buyer/requests');
-                      }}>
+                      })}>
                         <ShoppingCart className="h-4 w-4" />
                       </Button>
                     </CardFooter>

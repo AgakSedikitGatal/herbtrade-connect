@@ -32,6 +32,31 @@ const Product = () => {
   const [showChat, setShowChat] = useState(false);
 
   const isLoggedIn = authService.isAuthenticated();
+  const canBuy = authService.canTransactAsBuyer();
+
+  const requireBuyerKyc = (actionLabel: string) => {
+    if (!isLoggedIn) {
+      toast.error(`Please login to ${actionLabel}. General accounts can browse before KYC.`, {
+        action: {
+          label: "Login",
+          onClick: () => navigate('/login'),
+        },
+      });
+      return false;
+    }
+
+    if (!canBuy) {
+      toast.error("Complete Buyer KYC to create purchase requests or buy products.", {
+        action: {
+          label: "Start Buyer KYC",
+          onClick: () => navigate('/kyc?role=buyer'),
+        },
+      });
+      return false;
+    }
+
+    return true;
+  };
 
   // Unit conversion multipliers
   const unitMultipliers: Record<string, number> = {
@@ -64,13 +89,7 @@ const Product = () => {
   }
 
   const handleAddToCart = () => {
-    if (!isLoggedIn) {
-      toast.error("Please login to add items to cart", {
-        action: {
-          label: "Login",
-          onClick: () => navigate('/login'),
-        },
-      });
+    if (!requireBuyerKyc('add items to cart')) {
       return;
     }
 
@@ -89,15 +108,10 @@ const Product = () => {
   };
 
   const handleBuyNow = () => {
-    if (!isLoggedIn) {
-      toast.error("Please login to make a purchase", {
-        action: {
-          label: "Login",
-          onClick: () => navigate('/login'),
-        },
-      });
+    if (!requireBuyerKyc('make a purchase')) {
       return;
     }
+
     setShowOrderModal(true);
   };
 
@@ -253,7 +267,7 @@ const Product = () => {
             <div className="flex gap-3">
               <Button size="lg" className="flex-1 btn-hero" onClick={handleAddToCart}>
                 {isLoggedIn ? <ShoppingCart className="mr-2 h-5 w-5" /> : <LogIn className="mr-2 h-5 w-5" />}
-                {isLoggedIn ? 'Add to Cart' : 'Login to Add'}
+                {canBuy ? 'Add to Cart' : isLoggedIn ? 'Complete Buyer KYC' : 'Login to Add'}
               </Button>
               <Button size="lg" className="flex-1 btn-web3" onClick={handleBuyNow}>
                 Buy Now - ${calculatePrice().toFixed(2)} USD

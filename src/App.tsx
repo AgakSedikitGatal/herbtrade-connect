@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, type ReactNode } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation, Navigate } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import { CartProvider } from "@/contexts/CartContext";
 import { OrderProvider } from "@/contexts/OrderContext";
@@ -40,11 +40,27 @@ import ComplianceOnboarding from "./pages/seller/ComplianceOnboarding";
 import QRCompliance from "./pages/seller/QRCompliance";
 import ComplianceHistory from "./pages/buyer/ComplianceHistory";
 import ProductJourney from "./pages/ProductJourney";
+import KYCOnboarding from "./pages/KYCOnboarding";
 import TransactionDetail from "./pages/TransactionDetail";
 import ProductRequest from "./pages/buyer/ProductRequest";
 import NotFound from "./pages/NotFound";
+import { authService, type TradeRole } from "@/lib/auth";
 
 const queryClient = new QueryClient();
+
+const RequireRole = ({ role, children }: { role: TradeRole; children: ReactNode }) => {
+  const user = authService.getUser();
+
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (user.role !== role || !["pending", "verified"].includes(user.kycStatus)) {
+    return <Navigate to={`/kyc?role=${role}`} replace />;
+  }
+
+  return <>{children}</>;
+};
 
 const AnimatedRoutes = () => {
   const location = useLocation();
@@ -55,6 +71,7 @@ const AnimatedRoutes = () => {
         <Route path="/" element={<PageTransition><Index /></PageTransition>} />
         <Route path="/login" element={<PageTransition><Login /></PageTransition>} />
         <Route path="/register" element={<PageTransition><Register /></PageTransition>} />
+        <Route path="/kyc" element={<PageTransition><KYCOnboarding /></PageTransition>} />
         <Route path="/about" element={<PageTransition><About /></PageTransition>} />
         <Route path="/contact" element={<PageTransition><Contact /></PageTransition>} />
         <Route path="/shop" element={<PageTransition><Shop /></PageTransition>} />
@@ -62,24 +79,24 @@ const AnimatedRoutes = () => {
         <Route path="/supplier/:id" element={<PageTransition><Supplier /></PageTransition>} />
         <Route path="/suppliers" element={<PageTransition><Suppliers /></PageTransition>} />
         <Route path="/community" element={<PageTransition><Community /></PageTransition>} />
-        <Route path="/cart" element={<PageTransition><BuyerRequests /></PageTransition>} />
+        <Route path="/cart" element={<RequireRole role="buyer"><PageTransition><BuyerRequests /></PageTransition></RequireRole>} />
         <Route path="/tracking/:orderId" element={<PageTransition><Tracking /></PageTransition>} />
         <Route path="/tracking" element={<PageTransition><Tracking /></PageTransition>} />
-        <Route path="/buyer/dashboard" element={<BuyerDashboard />} />
-        <Route path="/buyer/requests" element={<PageTransition><BuyerRequests /></PageTransition>} />
-        <Route path="/buyer/orders" element={<PageTransition><BuyerOrders /></PageTransition>} />
-        <Route path="/buyer/ai-assistant" element={<PageTransition><BuyerAIAssistant /></PageTransition>} />
-        <Route path="/buyer/product-request" element={<PageTransition><ProductRequest /></PageTransition>} />
-        <Route path="/buyer/compliance-history" element={<PageTransition><ComplianceHistory /></PageTransition>} />
-        <Route path="/seller/dashboard" element={<SellerDashboard />} />
-        <Route path="/seller/products" element={<PageTransition><SellerProducts /></PageTransition>} />
-        <Route path="/seller/add-product" element={<PageTransition><AddProduct /></PageTransition>} />
-        <Route path="/seller/orders" element={<PageTransition><SellerOrders /></PageTransition>} />
-        <Route path="/seller/analytics" element={<PageTransition><SellerAnalytics /></PageTransition>} />
-        <Route path="/seller/withdraw" element={<PageTransition><SellerWithdraw /></PageTransition>} />
-        <Route path="/seller/ai-assistant" element={<PageTransition><SellerAIAssistant /></PageTransition>} />
-        <Route path="/seller/compliance-onboarding" element={<PageTransition><ComplianceOnboarding /></PageTransition>} />
-        <Route path="/seller/qr-compliance" element={<PageTransition><QRCompliance /></PageTransition>} />
+        <Route path="/buyer/dashboard" element={<RequireRole role="buyer"><BuyerDashboard /></RequireRole>} />
+        <Route path="/buyer/requests" element={<RequireRole role="buyer"><PageTransition><BuyerRequests /></PageTransition></RequireRole>} />
+        <Route path="/buyer/orders" element={<RequireRole role="buyer"><PageTransition><BuyerOrders /></PageTransition></RequireRole>} />
+        <Route path="/buyer/ai-assistant" element={<RequireRole role="buyer"><PageTransition><BuyerAIAssistant /></PageTransition></RequireRole>} />
+        <Route path="/buyer/product-request" element={<RequireRole role="buyer"><PageTransition><ProductRequest /></PageTransition></RequireRole>} />
+        <Route path="/buyer/compliance-history" element={<RequireRole role="buyer"><PageTransition><ComplianceHistory /></PageTransition></RequireRole>} />
+        <Route path="/seller/dashboard" element={<RequireRole role="seller"><SellerDashboard /></RequireRole>} />
+        <Route path="/seller/products" element={<RequireRole role="seller"><PageTransition><SellerProducts /></PageTransition></RequireRole>} />
+        <Route path="/seller/add-product" element={<RequireRole role="seller"><PageTransition><AddProduct /></PageTransition></RequireRole>} />
+        <Route path="/seller/orders" element={<RequireRole role="seller"><PageTransition><SellerOrders /></PageTransition></RequireRole>} />
+        <Route path="/seller/analytics" element={<RequireRole role="seller"><PageTransition><SellerAnalytics /></PageTransition></RequireRole>} />
+        <Route path="/seller/withdraw" element={<RequireRole role="seller"><PageTransition><SellerWithdraw /></PageTransition></RequireRole>} />
+        <Route path="/seller/ai-assistant" element={<RequireRole role="seller"><PageTransition><SellerAIAssistant /></PageTransition></RequireRole>} />
+        <Route path="/seller/compliance-onboarding" element={<RequireRole role="seller"><PageTransition><ComplianceOnboarding /></PageTransition></RequireRole>} />
+        <Route path="/seller/qr-compliance" element={<RequireRole role="seller"><PageTransition><QRCompliance /></PageTransition></RequireRole>} />
         <Route path="/journey/:batchCode" element={<PageTransition><ProductJourney /></PageTransition>} />
         <Route path="/transaction/:txHash" element={<PageTransition><TransactionDetail /></PageTransition>} />
         <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />

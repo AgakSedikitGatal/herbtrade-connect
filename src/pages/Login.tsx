@@ -3,12 +3,14 @@ import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Web3Header } from "@/components/Web3Header";
 import { Web3Footer } from "@/components/Web3Footer";
 import { Web3Background } from "@/components/Web3Background";
-import { authService, UserRole } from "@/lib/auth";
+import { authService } from "@/lib/auth";
+import { Eye, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 
 const Login = () => {
@@ -16,12 +18,11 @@ const Login = () => {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
-    role: 'buyer' as UserRole
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!formData.email || !formData.password) {
       toast.error("Please fill in all fields");
       return;
@@ -30,19 +31,15 @@ const Login = () => {
     const user = {
       name: formData.email.split('@')[0],
       email: formData.email,
-      company: "HerBlocX User",
+      company: "HerBlocX General Account",
       country: "Indonesia",
-      role: formData.role
+      role: 'general' as const,
+      kycStatus: 'not_started' as const,
     };
 
     authService.login(user);
-    toast.success("Login successful!");
-
-    if (formData.role === 'seller') {
-      navigate('/seller/dashboard');
-    } else {
-      navigate('/buyer/dashboard');
-    }
+    toast.success("Logged in as a general account. Complete KYC to trade.");
+    navigate('/kyc');
   };
 
   const handleGoogleLogin = () => {
@@ -55,15 +52,28 @@ const Login = () => {
       <Web3Header />
 
       <div className="flex-1 flex items-center justify-center p-4 pt-24 pb-12 relative z-10">
-        <Card className="w-full max-w-md glass-card border-border/50 animate-fade-in">
+        <Card className="w-full max-w-xl glass-card border-border/50 animate-fade-in">
           <CardHeader className="text-center">
             <div className="flex justify-center mb-4">
               <img src="/icon.png" alt="HerBlocX logo" className="h-12 w-12 object-contain" />
             </div>
+            <Badge className="mx-auto mb-2 bg-primary/20 text-primary border-primary/30">
+              <Eye className="h-3 w-3 mr-1" />
+              General access first
+            </Badge>
             <CardTitle className="text-3xl font-bold text-gradient-hero">Welcome to HerBlocX</CardTitle>
-            <CardDescription className="text-muted-foreground">Log in to your account to start trading</CardDescription>
+            <CardDescription className="text-muted-foreground">
+              Login creates a general account for browsing. Seller or Buyer trading access is unlocked through KYC.
+            </CardDescription>
           </CardHeader>
-          <CardContent className="p-8">
+          <CardContent className="p-8 pt-0">
+            <Alert className="mb-6 glass border-primary/30 bg-primary/10">
+              <ShieldCheck className="h-4 w-4 text-primary" />
+              <AlertDescription>
+                General users can explore marketplace, product details, public traceability, and community features. Buying, selling, quotations, and shipment documents require role KYC.
+              </AlertDescription>
+            </Alert>
+
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
@@ -91,25 +101,8 @@ const Login = () => {
                 />
               </div>
 
-              <div className="space-y-3">
-                <Label>I'm primarily a...</Label>
-                <RadioGroup
-                  value={formData.role}
-                  onValueChange={(value) => setFormData({ ...formData, role: value as UserRole })}
-                >
-                  <div className="flex items-center space-x-2 glass border border-border/50 rounded-lg p-3 hover:bg-primary/10 cursor-pointer transition-all">
-                    <RadioGroupItem value="buyer" id="buyer" />
-                    <Label htmlFor="buyer" className="cursor-pointer flex-1">Buyer</Label>
-                  </div>
-                  <div className="flex items-center space-x-2 glass border border-border/50 rounded-lg p-3 hover:bg-primary/10 cursor-pointer transition-all">
-                    <RadioGroupItem value="seller" id="seller" />
-                    <Label htmlFor="seller" className="cursor-pointer flex-1">Seller</Label>
-                  </div>
-                </RadioGroup>
-              </div>
-
               <Button type="submit" className="w-full btn-web3" size="lg">
-                Log In
+                Continue as General User
               </Button>
 
               <div className="relative">
@@ -142,19 +135,22 @@ const Login = () => {
                   />
                   <path
                     fill="currentColor"
-                    d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-                />
-              </svg>
-              Google
-            </Button>
+                    d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 0 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                  />
+                </svg>
+                Google
+              </Button>
 
-              <div className="text-center">
+              <div className="text-center space-y-2">
                 <p className="text-sm text-muted-foreground">
                   Don't have an account?{" "}
                   <Link to="/register" className="text-primary font-medium hover:underline">
                     Sign up here
                   </Link>
                 </p>
+                <Link to="/kyc" className="text-sm text-primary font-medium hover:underline">
+                  Already logged in? Upgrade to Seller or Buyer KYC
+                </Link>
               </div>
 
               <p className="text-xs text-center text-muted-foreground">

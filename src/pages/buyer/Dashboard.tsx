@@ -5,14 +5,18 @@ import { Web3Header } from "@/components/Web3Header";
 import { Web3Footer } from "@/components/Web3Footer";
 import { Web3Background } from "@/components/Web3Background";
 import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { BlockchainStats } from "@/components/BlockchainStats";
 import { DashboardSkeleton } from "@/components/DashboardSkeleton";
 import { PageTransition } from "@/components/PageTransition";
-import { Package, ShoppingBag, Truck, Plus, Bot, FileText, SearchCheck } from "lucide-react";
-import { authService } from "@/lib/auth";
+import { Package, ShoppingBag, Truck, Plus, Bot, FileText, SearchCheck, ShieldCheck, Sparkles } from "lucide-react";
+import { authService, type BuyerKycProfile } from "@/lib/auth";
 
 const BuyerDashboard = () => {
   const user = authService.getUser();
+  const buyerProfile = user?.role === "buyer" ? (user.kycProfile as BuyerKycProfile | undefined) : undefined;
+  const recommendedSimplisia = buyerProfile?.simplisiaNeeded?.length ? buyerProfile.simplisiaNeeded : ["Jahe", "Kunyit", "Temulawak"];
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -46,6 +50,52 @@ const BuyerDashboard = () => {
               <p className="text-muted-foreground text-lg">
                 Manage your portfolio, track transactions, and explore the marketplace.
               </p>
+            </motion.div>
+
+            <motion.div
+              className="grid gap-4 md:grid-cols-[1.4fr_1fr] mb-8"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.15 }}
+            >
+              <Card className="glass border-border/50">
+                <CardContent className="p-6">
+                  <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+                    <div>
+                      <Badge className="mb-3 bg-primary/10 text-primary border-primary/30">
+                        <ShieldCheck className="h-3.5 w-3.5 mr-1" /> Buyer KYC Access
+                      </Badge>
+                      <h2 className="text-2xl font-semibold mb-2">{authService.getKycStatusLabel(user?.kycStatus)}</h2>
+                      <p className="text-sm text-muted-foreground max-w-2xl">
+                        {buyerProfile
+                          ? `Legalitas ${buyerProfile.businessEntityName || buyerProfile.legalName} dengan NIB ${buyerProfile.nibNumber} sudah menjadi dasar transaksi dan preferensi sourcing.`
+                          : "Lengkapi Buyer KYC agar transaksi aktif dan dashboard dapat memberi rekomendasi simplisia sesuai kebutuhan perusahaan."}
+                      </p>
+                    </div>
+                    <Button asChild variant={buyerProfile ? "outline" : "default"}>
+                      <Link to="/kyc?role=buyer">{buyerProfile ? "Update Buyer KYC" : "Start Buyer KYC"}</Link>
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="glass border-border/50">
+                <CardContent className="p-6">
+                  <Badge className="mb-3 bg-secondary/10 text-secondary border-secondary/30">
+                    <Sparkles className="h-3.5 w-3.5 mr-1" /> Recommended Sourcing
+                  </Badge>
+                  <div className="flex flex-wrap gap-2 mb-3">
+                    {recommendedSimplisia.map((item) => (
+                      <Badge key={item} variant="outline">{item}</Badge>
+                    ))}
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    {buyerProfile
+                      ? `${buyerProfile.purchaseVolumeKg.toLocaleString()} kg/month target, preferred origin: ${buyerProfile.preferredOrigin}.`
+                      : "Rekomendasi awal akan dipersonalisasi setelah kebutuhan simplisia diisi pada Buyer KYC."}
+                  </p>
+                </CardContent>
+              </Card>
             </motion.div>
 
             {/* Quick Actions */}

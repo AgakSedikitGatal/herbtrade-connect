@@ -5,6 +5,7 @@ import { Web3Header } from "@/components/Web3Header";
 import { Web3Footer } from "@/components/Web3Footer";
 import { Web3Background } from "@/components/Web3Background";
 import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { BlockchainStats } from "@/components/BlockchainStats";
 import { DashboardSkeleton } from "@/components/DashboardSkeleton";
 import { PageTransition } from "@/components/PageTransition";
@@ -53,6 +54,35 @@ const SellerDashboard = () => {
               <p className="text-muted-foreground text-lg">
                 Manage your products, track sales, and grow your herbal business on the blockchain.
               </p>
+            </motion.div>
+
+            <motion.div
+              className="mb-8"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.15 }}
+            >
+              <Card className="glass-card border-primary/30">
+                <CardContent className="pt-6">
+                  <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                    <div>
+                      <div className="flex items-center gap-3 mb-2">
+                        <ShieldCheck className="h-5 w-5 text-primary" />
+                        <h2 className="text-xl font-bold">Seller KYC Status</h2>
+                        <Badge className="bg-primary/10 text-primary border-primary/30">
+                          {authService.getKycStatusLabel(user?.kycStatus)}
+                        </Badge>
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        Data legalitas, NIB, lahan, foto geotag, dan simplisia Seller menjadi sumber otomatis untuk Quotation, Bill of Lading, dokumen ekspor, serta QR traceability.
+                      </p>
+                    </div>
+                    <Link to="/kyc?role=seller" className="inline-flex items-center justify-center rounded-md border border-primary/30 px-4 py-2 text-sm font-medium text-primary hover:bg-primary/10 transition-colors">
+                      Update Seller KYC
+                    </Link>
+                  </div>
+                </CardContent>
+              </Card>
             </motion.div>
 
             {/* Stats Overview */}

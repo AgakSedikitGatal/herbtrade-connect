@@ -11,14 +11,16 @@ import { Slider } from "@/components/ui/slider";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { products, categories } from "@/lib/products";
 import { isProductInSeason, isProductInPeakSeason, getCurrentSeason, getSeasonalProductIds } from "@/lib/seasons";
-import { ShoppingCart, TrendingUp, TrendingDown, Coins, Clock, BarChart3, Verified, Package, Store, Leaf } from "lucide-react";
+import { ShoppingCart, TrendingUp, TrendingDown, Coins, Clock, BarChart3, Verified, Package, Store, Leaf, MapPin } from "lucide-react";
 import { toast } from "sonner";
 import { SearchAutocomplete } from "@/components/SearchAutocomplete";
 import { SupplierTrendGraph } from "@/components/SupplierTrendGraph";
 import { ProductCardSkeleton, StatCardSkeleton } from "@/components/ui/loading-spinner";
 import { LivePriceTicker, LivePriceBadge } from "@/components/LivePriceTicker";
 import { useCart } from "@/contexts/CartContext";
+import { useCompliance } from "@/contexts/ComplianceContext";
 import { authService } from "@/lib/auth";
+import { getSellerProductGeotag } from "@/lib/productGeotag";
 
 // Mock price data for blockchain display
 const generateMockPriceChange = () => {
@@ -29,6 +31,8 @@ const generateMockPriceChange = () => {
 const Shop = () => {
   const navigate = useNavigate();
   const { addToCart } = useCart();
+  const { sellerProfile } = useCompliance();
+  const sellerProductGeotag = getSellerProductGeotag(sellerProfile);
   const [priceRange, setPriceRange] = useState([0, 500]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [showInStock, setShowInStock] = useState(false);
@@ -372,9 +376,28 @@ const Shop = () => {
                         </div>
 
                         {/* Location */}
-                        <p className="text-xs text-muted-foreground flex items-center gap-1">
-                          📍 {product.location}
-                        </p>
+                        <div className="space-y-2 rounded-lg border border-border/40 bg-muted/20 p-3 text-xs">
+                          <p className="text-muted-foreground flex items-center gap-1">
+                            <MapPin className="h-3.5 w-3.5 text-primary" />
+                            <span>{product.location}</span>
+                          </p>
+                          {sellerProductGeotag ? (
+                            <div className="space-y-1 rounded-md border border-primary/20 bg-primary/10 px-2 py-1.5">
+                              <p className="text-muted-foreground">Seller farm: {sellerProductGeotag.farmLocation}</p>
+                              <a
+                                href={sellerProductGeotag.mapUrl}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="block font-mono text-primary transition-colors hover:underline"
+                                aria-label={`Open seller geotag coordinates ${sellerProductGeotag.coordinateLabel} in Google Maps`}
+                              >
+                                Geotag: {sellerProductGeotag.coordinateLabel}
+                              </a>
+                            </div>
+                          ) : (
+                            <p className="text-muted-foreground">Geotag: awaiting seller input</p>
+                          )}
+                        </div>
 
                         {product.onSale && (
                           <div className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-accent/20 text-accent border border-accent/30">

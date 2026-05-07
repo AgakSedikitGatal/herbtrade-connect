@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Minus, Plus, ShoppingCart, MapPin, Shield, Star, Package, LogIn, MessageCircle } from "lucide-react";
 import { products } from "@/lib/products";
+import { getSellerProductGeotag } from "@/lib/productGeotag";
 import { toast } from "sonner";
 import { PriceChart } from "@/components/PriceChart";
 import { TransactionHistory } from "@/components/TransactionHistory";
@@ -18,13 +19,16 @@ import { SupplierChat } from "@/components/SupplierChat";
 import { OrderPlacement } from "@/components/OrderPlacement";
 import { LivePriceDisplay } from "@/components/LivePriceTicker";
 import { useCart } from "@/contexts/CartContext";
+import { useCompliance } from "@/contexts/ComplianceContext";
 import { authService } from "@/lib/auth";
 
 const Product = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { addToCart } = useCart();
+  const { sellerProfile } = useCompliance();
   const product = products.find(p => p.id === id);
+  const sellerProductGeotag = getSellerProductGeotag(sellerProfile);
   const [quantity, setQuantity] = useState(1);
   const [quantityUnit, setQuantityUnit] = useState("kg");
   const [purchaseType, setPurchaseType] = useState("one-time");
@@ -169,6 +173,11 @@ const Product = () => {
                           <MapPin className="h-3 w-3" />
                           <span>{product.supplier.location}</span>
                         </div>
+                        {sellerProductGeotag && (
+                          <div className="mt-1 font-mono text-xs text-primary">
+                            Geotag: {sellerProductGeotag.coordinateLabel}
+                          </div>
+                        )}
                       </div>
                     </div>
                     <div className="text-right">
@@ -329,6 +338,32 @@ const Product = () => {
 
                 <h3 className="font-semibold text-lg mb-2 mt-6">Cultivation Area</h3>
                 <p className="text-sm">{product.cultivationArea}</p>
+
+                <h3 className="font-semibold text-lg mb-2 mt-6">Seller Geotag Coordinate</h3>
+                {sellerProductGeotag ? (
+                  <div className="rounded-lg border border-primary/20 bg-primary/10 p-4 text-sm">
+                    <div className="flex items-start gap-3">
+                      <MapPin className="mt-0.5 h-4 w-4 text-primary" />
+                      <div className="space-y-1">
+                        <p className="font-medium text-foreground">{sellerProductGeotag.farmLocation}</p>
+                        <a
+                          href={sellerProductGeotag.mapUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="font-mono text-primary underline-offset-4 hover:underline"
+                          aria-label={`Open seller geotag coordinates ${sellerProductGeotag.coordinateLabel} in Google Maps`}
+                        >
+                          {sellerProductGeotag.coordinateLabel}
+                        </a>
+                        <p className="text-xs text-muted-foreground">
+                          Coordinates are pulled from the seller compliance geotag input for this product listing.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground">Seller geotag has not been submitted yet.</p>
+                )}
               </CardContent>
             </Card>
           </div>
